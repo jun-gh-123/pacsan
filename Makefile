@@ -1,28 +1,32 @@
 NAME = pacsan
 CC = g++
+INCLUDE_FLAGS = -Iinclude
 COMPILER_FLAGS = -Wall -g
-LINKER_FLAGS = -lSDL2
+LINKER_FLAGS = -lSDL2 -lSDL2_image
 BUILD_DIR = build
 ASSETS_DIR = assets
-WEB_DIR = web
+SRC_DIR = src
+SRC = $(shell find $(SRC_DIR) -name '*.cpp')
 
 .PHONY: clean
 
-test: build
-	cd $(BUILD_DIR); ./$(NAME)
+desktop: build-desktop
+	cd $(BUILD_DIR)/desktop; ./$(NAME)
 
-test-web: web
-	firefox $(WEB_DIR)/$(NAME).html
+web: build-web
+	firefox $(BUILD_DIR)/web/$(NAME).html
 
 clean:
+	rm -rf $(OBJ_DIR)
 	rm -rf $(BUILD_DIR)
-	rm -rf $(WEB_DIR)
 
-build: main.cpp
+build-desktop: main.cpp
 	mkdir -p $(BUILD_DIR)
-	$(CC) main.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(BUILD_DIR)/$(NAME)
-	cp -r $(ASSETS_DIR) $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/desktop
+	$(CC) main.cpp $(SRC) $(INCLUDE_FLAGS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(BUILD_DIR)/desktop/$(NAME)
+	cp -r $(ASSETS_DIR) $(BUILD_DIR)/desktop
 
-web: main.cpp
-	mkdir -p $(WEB_DIR)
-	em++ main.cpp -s USE_SDL=2 -Os --embed-file $(ASSETS_DIR) -o $(WEB_DIR)/$(NAME).html
+build-web: main.cpp
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/web
+	em++ main.cpp $(SRC) -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -O2 --embed-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
