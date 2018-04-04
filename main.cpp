@@ -5,6 +5,7 @@
 #include "params.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
+#include "Ghost.hpp"
 #include "Stage.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -16,8 +17,9 @@ SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
 Sprite sprites[4];
 Pacsan pacsan;
+Ghost ghost;
 Stage stage;
-int tiles[ROWS][COLS];
+int tiles[ROWS * COLS];
 bool quit = false;
 
 bool init()
@@ -86,25 +88,28 @@ bool init()
 		{
 			if (c == 0 || c == COLS - 1 || r == 0 || r == ROWS - 1 || (r % 2 == 0 && c% 2 == 0))
 			{
-				tiles[r][c] = 1;
+				tiles[r * COLS + c] = 1;
 			}
 			else
 			{
-				tiles[r][c] = 0;
+				tiles[r * COLS + c] = 0;
 			}
 		}
 	}
-	tiles[ROWS / 2][0] = 0;
-	tiles[ROWS / 2][COLS - 1] = 0;
-	tiles[0][COLS / 2] = 0;
-	tiles[ROWS - 1][COLS / 2] = 0;
+	tiles[(ROWS / 2) * COLS + 0] = 0;
+	tiles[(ROWS / 2) * COLS + COLS - 1] = 0;
+	tiles[0 + COLS / 2] = 0;
+	tiles[(ROWS - 1) * COLS + COLS / 2] = 0;
 	stage.Init(renderer, &sprites[SpriteCode::BLOCK], tiles);
 
 	// init gameobjects
 	GameObject::sprites = sprites;
-	pacsan.Init(&stage);
+	pacsan.Init();
 	pacsan.x = BLOCKSIZE;
 	pacsan.y = BLOCKSIZE;
+	ghost.Init();
+	ghost.x = WIDTH - 2 * BLOCKSIZE;
+	ghost.y = BLOCKSIZE;
 
 	return true;
 }
@@ -146,14 +151,15 @@ void loop(void *arg)
 
 	// update
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-	pacsan.Update(keystate);
+	pacsan.Update(keystate, &stage);
+	ghost.Update(keystate, &stage);
 
 	// render
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
 	stage.Draw(renderer);
 	pacsan.Draw();
-	sprites[SpriteCode::GHOST].Render(BLOCKSIZE * (COLS - 2), BLOCKSIZE);
+	ghost.Draw();
 
 	SDL_RenderPresent(renderer);
 }

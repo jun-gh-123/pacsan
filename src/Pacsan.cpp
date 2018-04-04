@@ -1,15 +1,13 @@
 #include "Pacsan.hpp"
 
-void Pacsan::Init(
-	Stage *stage
-)
+void Pacsan::Init()
 {
-	this->stage = stage;
 	this->SetSprite(SpriteCode::PACSAN_OPEN);
 }
 
 void Pacsan::Update(
-	const Uint8 *keystate
+	const Uint8 *keystate,
+	Stage *stage
 )
 {
 	if (keystate[SDL_SCANCODE_UP])
@@ -109,7 +107,7 @@ void Pacsan::Update(
 				col++;
 				break;
 		}
-		if (!this->stage->IsBlock(row, col))
+		if (!stage->IsBlock(row, col))
 		{
 			this->direction = this->nextDirection;
 			this->nextDirection = this->direction;

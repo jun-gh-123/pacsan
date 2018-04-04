@@ -2,13 +2,6 @@
 
 Sprite *GameObject::sprites = 0;
 
-void GameObject::Init(
-	int spriteCode
-)
-{
-	this->SetSprite(spriteCode);
-}
-
 void GameObject::SetSprite(
 	int spriteCode
 )

@@ -29,4 +29,4 @@ build-desktop: main.cpp
 build-web: main.cpp
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/web
-	em++ main.cpp $(SRC) -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -O2 --embed-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
+	em++ main.cpp $(SRC) -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -O2 -std=c++11 --embed-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html

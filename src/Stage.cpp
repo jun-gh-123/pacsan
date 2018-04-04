@@ -11,9 +11,10 @@ Stage::~Stage()
 void Stage::Init(
 	SDL_Renderer *renderer,
 	Sprite *block,
-	int tiles[ROWS][COLS]
+	int *tiles
 )
 {
+	this->tiles = tiles;
 	if (!this->texture)
 	{
 		this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
@@ -25,8 +26,7 @@ void Stage::Init(
 	{
 		for (int c = 0; c < COLS; c++)
 		{
-			this->tiles[r][c] = tiles[r][c];
-			if (tiles[r][c])
+			if (tiles[r * COLS + c])
 			{
 				block->Render(c * BLOCKSIZE, r * BLOCKSIZE);
 			}
@@ -47,7 +47,7 @@ bool Stage::IsBlock(
 	{
 		return false;
 	}
-	return this->tiles[row][col];
+	return this->tiles[row * COLS + col];
 }
 
 void Stage::Draw(
