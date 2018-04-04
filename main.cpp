@@ -5,6 +5,7 @@
 #include "params.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
+#include "Stage.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -15,6 +16,8 @@ SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
 Sprite sprites[4];
 Pacsan pacsan;
+Stage stage;
+int tiles[ROWS][COLS];
 bool quit = false;
 
 bool init()
@@ -76,9 +79,26 @@ bool init()
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
 	sprites[SpriteCode::GHOST].SetColor(255, 40, 40);
 
+	// init tiles
+	for (int r = 0; r < ROWS; r++)
+	{
+		for (int c = 0; c < COLS; c++)
+		{
+			if (c == 0 || c == COLS - 1 || r == 0 || r == ROWS - 1 || (r % 2 == 0 && c% 2 == 0))
+			{
+				tiles[r][c] = 1;
+			}
+			else
+			{
+				tiles[r][c] = 0;
+			}
+		}
+	}
+	stage.Init(renderer, &sprites[SpriteCode::BLOCK], tiles);
+
 	// init gameobjects
 	GameObject::sprites = sprites;
-	pacsan.Init(SpriteCode::PACSAN_OPEN);
+	pacsan.Init(&stage);
 	pacsan.x = BLOCKSIZE;
 	pacsan.y = BLOCKSIZE;
 
@@ -127,16 +147,7 @@ void loop(void *arg)
 	// render
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
-	for (int i = 0; i < COLS; i++)
-	{
-		for (int j = 0; j < ROWS; j++)
-		{
-			if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1 || (i % 2 == 0 && j % 2 == 0))
-			{
-				sprites[SpriteCode::BLOCK].Render(i * BLOCKSIZE, j * BLOCKSIZE);
-			}
-		}
-	}
+	stage.Draw(renderer);
 	pacsan.Draw();
 	sprites[SpriteCode::GHOST].Render(BLOCKSIZE * (COLS - 2), BLOCKSIZE);
 

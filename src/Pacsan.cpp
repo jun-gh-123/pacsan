@@ -1,62 +1,115 @@
 #include "Pacsan.hpp"
 
+void Pacsan::Init(
+	Stage *stage
+)
+{
+	this->stage = stage;
+	this->SetSprite(SpriteCode::PACSAN_OPEN);
+}
+
 void Pacsan::Update(
 	const Uint8 *keystate
 )
 {
-	this->animateCount++;
-	if (this->animateCount >= 8)
-	{
-		if (this->spriteCode == SpriteCode::PACSAN_OPEN)
-		{
-			this->SetSprite(SpriteCode::PACSAN_CLOSE);
-		}
-		else
-		{
-			this->SetSprite(SpriteCode::PACSAN_OPEN);
-		}
-		this->animateCount = 0;
-	}
-
 	if (keystate[SDL_SCANCODE_UP])
 	{
-		this->nextDirection = Direction::Up;
+		this->nextDirection = Direction::UP;
 	}
 	if (keystate[SDL_SCANCODE_DOWN])
 	{
-		this->nextDirection = Direction::Down;
+		this->nextDirection = Direction::DOWN;
 	}
 	if (keystate[SDL_SCANCODE_LEFT])
 	{
-		this->nextDirection = Direction::Left;
+		this->nextDirection = Direction::LEFT;
 	}
 	if (keystate[SDL_SCANCODE_RIGHT])
 	{
-		this->nextDirection = Direction::Right;
+		this->nextDirection = Direction::RIGHT;
 	}
 
-	switch (this->direction)
+	if (this->moving)
 	{
-		case Direction::Up:
-			this->y -= this->spd;
-			this->angle = 270.0f;
-			break;
-		case Direction::Down:
-			this->y += this->spd;
-			this->angle = 90.0f;
-			break;
-		case Direction::Left:
-			this->x -= this->spd;
-			this->angle = 180.0f;
-			break;
-		case Direction::Right:
-			this->x += this->spd;
-			this->angle = 0.0f;
-			break;
+		this->animateCount++;
+		if (this->animateCount >= 12)
+		{
+			if (this->spriteCode == SpriteCode::PACSAN_OPEN)
+			{
+				this->SetSprite(SpriteCode::PACSAN_CLOSE);
+			}
+			else
+			{
+				this->SetSprite(SpriteCode::PACSAN_OPEN);
+			}
+			this->animateCount = 0;
+		}
+
+		switch (this->direction)
+		{
+			case Direction::UP:
+				this->y -= this->spd;
+				break;
+			case Direction::DOWN:
+				this->y += this->spd;
+				break;
+			case Direction::LEFT:
+				this->x -= this->spd;
+				break;
+			case Direction::RIGHT:
+				this->x += this->spd;
+				break;
+		}
 	}
+
 	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0)
 	{
-		this->direction = this->nextDirection;
-		this->nextDirection = this->direction;
+		int row = this->y / BLOCKSIZE;
+		int col = this->x / BLOCKSIZE;
+
+		switch (this->nextDirection)
+		{
+			case Direction::UP:
+				row--;
+				break;
+			case Direction::DOWN:
+				row++;
+				break;
+			case Direction::LEFT:
+				col--;
+				break;
+			case Direction::RIGHT:
+				col++;
+				break;
+		}
+		if (!this->stage->IsBlock(row, col))
+		{
+			this->direction = this->nextDirection;
+			this->nextDirection = this->direction;
+			this->moving = true;
+			switch (this->direction)
+			{
+				case Direction::UP:
+					this->angle = 270.0f;
+					break;
+				case Direction::DOWN:
+					this->angle = 90.0f;
+					break;
+				case Direction::LEFT:
+					this->angle = 180.0f;
+					break;
+				case Direction::RIGHT:
+					this->angle = 0.0f;
+					break;
+			}
+		}
+		else
+		{
+			if (this->direction == this->nextDirection)
+			{
+				this->moving = false;
+				this->SetSprite(SpriteCode::PACSAN_OPEN);
+			}
+		}
 	}
 }
