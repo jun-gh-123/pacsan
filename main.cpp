@@ -2,24 +2,19 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "params.hpp"
 #include "Sprite.hpp"
+#include "Pacsan.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
-#define TITLE "pacsan"
-#define BLOCKSIZE 32
-#define COLS 16
-#define ROWS 24
-
-const int WIDTH = BLOCKSIZE * COLS;
-const int HEIGHT = BLOCKSIZE * ROWS;
-
 SDL_Window *window = 0;
 SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
-Sprite block, pacsan, ghost;
+Sprite sprites[4];
+Pacsan pacsan;
 bool quit = false;
 
 bool init()
@@ -70,10 +65,22 @@ bool init()
 	}
 
 	// init sprites
-	block.Init(0, 0, BLOCKSIZE, BLOCKSIZE);
-	pacsan.Init(BLOCKSIZE, 0, BLOCKSIZE, BLOCKSIZE);
-	ghost.Init(3 * BLOCKSIZE, 0, BLOCKSIZE, BLOCKSIZE);
-	pacsan.SetColor(255, 255, 0);
+	Sprite::spritesheet = spritesheet;
+	Sprite::renderer = renderer;
+	for (int i = 0; i < 4; i++)
+	{
+		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
+	}
+	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
+	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
+	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
+	sprites[SpriteCode::GHOST].SetColor(255, 40, 40);
+
+	// init gameobjects
+	GameObject::sprites = sprites;
+	pacsan.Init(SpriteCode::PACSAN_OPEN);
+	pacsan.x = BLOCKSIZE;
+	pacsan.y = BLOCKSIZE;
 
 	return true;
 }
@@ -105,7 +112,6 @@ void loop(void *arg)
 			}
 		}
 	}
-
 	if (quit)
 	{
 		#ifdef __EMSCRIPTEN__
@@ -114,10 +120,26 @@ void loop(void *arg)
 		return;
 	}
 
+	// update
+	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+	pacsan.Update(keystate);
+
 	// render
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
-	pacsan.Render(50, 50, spritesheet, renderer);
+	for (int i = 0; i < COLS; i++)
+	{
+		for (int j = 0; j < ROWS; j++)
+		{
+			if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1 || (i % 2 == 0 && j % 2 == 0))
+			{
+				sprites[SpriteCode::BLOCK].Render(i * BLOCKSIZE, j * BLOCKSIZE);
+			}
+		}
+	}
+	pacsan.Draw();
+	sprites[SpriteCode::GHOST].Render(BLOCKSIZE * (COLS - 2), BLOCKSIZE);
+
 	SDL_RenderPresent(renderer);
 }
 

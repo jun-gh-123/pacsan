@@ -1,11 +1,13 @@
 #include "Sprite.hpp"
 
+SDL_Texture *Sprite::spritesheet = 0;
+SDL_Renderer *Sprite::renderer = 0;
+
 Sprite::Sprite()
 {
 	this->r = 255;
 	this->g = 255;
 	this->b = 255;
-	this->angle = 0.0f;
 }
 
 void Sprite::Init(
@@ -31,10 +33,7 @@ void Sprite::SetColor(
 }
 
 void Sprite::Render(
-	int x,
-	int y,
-	SDL_Texture *spritesheet,
-	SDL_Renderer *renderer
+	int x, int y, double angle, SDL_RendererFlip flip
 )
 {
 	SDL_Rect dstrect = {
@@ -44,5 +43,5 @@ void Sprite::Render(
 		this->clip.h
 	};
 	SDL_SetTextureColorMod(spritesheet, this->r, this->g, this->b);
-	SDL_RenderCopyEx(renderer, spritesheet, &this->clip, &dstrect, this->angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(Sprite::renderer, Sprite::spritesheet, &this->clip, &dstrect, angle, NULL, flip);
 }
