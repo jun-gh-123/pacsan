@@ -66,6 +66,33 @@ void Pacsan::Update(
 	{
 		int row = this->y / BLOCKSIZE;
 		int col = this->x / BLOCKSIZE;
+		bool offscreen = false;
+
+		if (row < 0)
+		{
+			this->y = ROWS * BLOCKSIZE;
+			offscreen = true;
+		}
+		if (row >= ROWS)
+		{
+			this->y = -BLOCKSIZE;
+			offscreen = true;
+		}
+		if (col < 0)
+		{
+			this->x = COLS * BLOCKSIZE;
+			offscreen = true;
+		}
+		if (col >= COLS)
+		{
+			this->x = -BLOCKSIZE;
+			offscreen = true;
+		}
+
+		if (offscreen)
+		{
+			return;
+		}
 
 		switch (this->nextDirection)
 		{

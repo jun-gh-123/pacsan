@@ -39,6 +39,14 @@ bool Stage::IsBlock(
 	int row, int col
 )
 {
+	if (row < 0 || row >= ROWS)
+	{
+		return false;
+	}
+	if (col < 0 || col >= COLS)
+	{
+		return false;
+	}
 	return this->tiles[row][col];
 }
 

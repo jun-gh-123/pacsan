@@ -94,6 +94,10 @@ bool init()
 			}
 		}
 	}
+	tiles[ROWS / 2][0] = 0;
+	tiles[ROWS / 2][COLS - 1] = 0;
+	tiles[0][COLS / 2] = 0;
+	tiles[ROWS - 1][COLS / 2] = 0;
 	stage.Init(renderer, &sprites[SpriteCode::BLOCK], tiles);
 
 	// init gameobjects
