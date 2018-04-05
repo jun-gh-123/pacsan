@@ -2,31 +2,33 @@
 
 Stage::~Stage()
 {
-	if (this->texture)
+	if (this->blocksTexture)
 	{
-		SDL_DestroyTexture(this->texture);
+		SDL_DestroyTexture(this->blocksTexture);
 	}
 }
 
 void Stage::Init(
 	SDL_Renderer *renderer,
-	Sprite *block,
+	Sprite *sprites,
 	int *tiles
 )
 {
 	this->tiles = tiles;
-	if (!this->texture)
+	if (!this->blocksTexture)
 	{
-		this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
+		this->blocksTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
 	}
-	SDL_SetRenderTarget(renderer, this->texture);
+	SDL_SetRenderTarget(renderer, this->blocksTexture);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
+	Sprite *block = &sprites[SpriteCode::BLOCK];
 	for (int r = 0; r < ROWS; r++)
 	{
 		for (int c = 0; c < COLS; c++)
 		{
-			if (tiles[r * COLS + c])
+			int tilecode = tiles[r * COLS + c];
+			if (tilecode == TileCode::BLOCK)
 			{
 				block->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			}
@@ -35,24 +37,53 @@ void Stage::Init(
 	SDL_SetRenderTarget(renderer, NULL);
 }
 
-bool Stage::IsBlock(
+int Stage::GetTile(
 	int row, int col
 )
 {
 	if (row < 0 || row >= ROWS)
 	{
-		return false;
+		return TileCode::EMPTY;
 	}
 	if (col < 0 || col >= COLS)
 	{
-		return false;
+		return TileCode::EMPTY;
 	}
 	return this->tiles[row * COLS + col];
 }
 
-void Stage::Draw(
-	SDL_Renderer *renderer
+void Stage::SetTile(
+	int row, int col, int val
 )
 {
-	SDL_RenderCopy(renderer, this->texture, NULL, NULL);
+	this->tiles[row * COLS + col] = val;
+}
+
+void Stage::Draw(
+	SDL_Renderer *renderer,
+	Sprite *sprites
+)
+{
+	// draw blocks
+	SDL_RenderCopy(renderer, this->blocksTexture, NULL, NULL);
+
+	// draw pellets
+	Sprite *pellet = &sprites[SpriteCode::PELLET];
+	Sprite *superPellet = &sprites[SpriteCode::SUPER_PELLET];
+	for (int r = 0; r < ROWS; r++)
+	{
+		for (int c = 0; c < COLS; c++)
+		{
+			int tilecode = this->tiles[r * COLS + c];
+			if (tilecode == TileCode::PELLET)
+			{
+				pellet->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
+			}
+			else if (tilecode == TileCode::SUPER_PELLET)
+			{
+				superPellet->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
+			}
+		}
+	}
+
 }

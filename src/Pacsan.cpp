@@ -66,6 +66,8 @@ void Pacsan::Update(
 		int col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
+		stage->SetTile(row, col, TileCode::EMPTY);
+
 		if (row < 0)
 		{
 			this->y = ROWS * BLOCKSIZE;
@@ -107,7 +109,7 @@ void Pacsan::Update(
 				col++;
 				break;
 		}
-		if (!stage->IsBlock(row, col))
+		if (stage->GetTile(row, col) != TileCode::BLOCK)
 		{
 			this->direction = this->nextDirection;
 			this->nextDirection = this->direction;

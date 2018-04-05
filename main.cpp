@@ -21,7 +21,7 @@ SDL_Window *window = 0;
 SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
 TTF_Font *font = 0;
-Sprite sprites[4];
+Sprite sprites[8];
 Pacsan pacsan;
 Ghost ghost;
 Stage stage;
@@ -95,14 +95,14 @@ bool init()
 
 	// init sprites
 	Sprite::spritesheet = spritesheet;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
 	}
 	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
 	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
-	sprites[SpriteCode::GHOST].SetColor(255, 60, 60);
+	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
 
 	// init tiles
 	for (int r = 0; r < ROWS; r++)
@@ -115,7 +115,7 @@ bool init()
 			}
 			else
 			{
-				tiles[r * COLS + c] = 0;
+				tiles[r * COLS + c] = 2;
 			}
 		}
 	}
@@ -123,7 +123,8 @@ bool init()
 	tiles[(ROWS / 2) * COLS + COLS - 1] = 0;
 	tiles[0 + COLS / 2] = 0;
 	tiles[(ROWS - 1) * COLS + COLS / 2] = 0;
-	stage.Init(renderer, &sprites[SpriteCode::BLOCK], tiles);
+	tiles[9 * COLS + 9] = 3;
+	stage.Init(renderer, sprites, tiles);
 
 	// init gameobjects
 	GameObject::sprites = sprites;
@@ -180,7 +181,7 @@ void loop(void *arg)
 	// render
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
-	stage.Draw(renderer);
+	stage.Draw(renderer, sprites);
 	pacsan.Draw(renderer);
 	ghost.Draw(renderer);
 	title.Draw(renderer);

@@ -4,7 +4,7 @@
 void Ghost::Init()
 {
 	this->spd = 2;
-	this->SetSprite(SpriteCode::GHOST);
+	this->SetSprite(SpriteCode::GHOST_CHASE);
 }
 
 void Ghost::Update(
@@ -87,7 +87,7 @@ void Ghost::Update(
 					break;
 			}
 
-			if (!stage->IsBlock(nextrow, nextcol))
+			if (stage->GetTile(nextrow, nextcol) != TileCode::BLOCK)
 			{
 				found = true;
 				this->nextDirection = nextDirection;

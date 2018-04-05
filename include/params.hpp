@@ -13,7 +13,19 @@ namespace SpriteCode {
 		BLOCK = 0,
 		PACSAN_OPEN,
 		PACSAN_CLOSE,
-		GHOST
+		GHOST_CHASE,
+		GHOST_ESCAPE,
+		PELLET,
+		SUPER_PELLET
+	};
+};
+
+namespace TileCode {
+	enum {
+		EMPTY = 0,
+		BLOCK,
+		PELLET,
+		SUPER_PELLET
 	};
 };
 
