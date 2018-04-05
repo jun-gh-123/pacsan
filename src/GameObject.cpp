@@ -10,7 +10,14 @@ void GameObject::SetSprite(
 	this->sprite = &sprites[spriteCode];
 }
 
-void GameObject::Draw()
+void GameObject::Draw(
+	SDL_Renderer *renderer
+)
 {
-	this->sprite->Render(this->x, this->y, this->angle, this->flip);
+	this->sprite->Render(
+		renderer,
+		this->x, this->y,
+		this->angle,
+		this->flip
+	);
 }

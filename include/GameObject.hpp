@@ -23,7 +23,7 @@ class GameObject {
 		virtual void Init() = 0;
 		void SetSprite(int spriteCode);
 		virtual void Update(const Uint8 *keystate, Stage *stage) = 0;
-		void Draw();
+		void Draw(SDL_Renderer *renderer);
 };
 
 #endif

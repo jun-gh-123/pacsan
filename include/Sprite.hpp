@@ -11,11 +11,11 @@ class Sprite {
 		double angle;
 	public:
 		static SDL_Texture *spritesheet;
-		static SDL_Renderer *renderer;
 		Sprite();
 		void Init(int clipX, int clipY, int clipSize, int size);
 		void SetColor(Uint8 r, Uint8 g, Uint8 b);
 		void Render(
+			SDL_Renderer *renderer,
 			int x, int y,
 			double angle = 0.0f,
 			SDL_RendererFlip flip = SDL_FLIP_NONE

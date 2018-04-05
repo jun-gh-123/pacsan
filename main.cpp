@@ -1,12 +1,14 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "params.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
 #include "Ghost.hpp"
 #include "Stage.hpp"
+#include "Text.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -15,10 +17,12 @@
 SDL_Window *window = 0;
 SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
+TTF_Font *font = 0;
 Sprite sprites[4];
 Pacsan pacsan;
 Ghost ghost;
 Stage stage;
+Text title;
 int tiles[ROWS * COLS];
 bool quit = false;
 
@@ -32,6 +36,11 @@ bool init()
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 	{
 		printf("Failed to initialize SDL_Image: %s\n", IMG_GetError());
+		return false;
+	}
+	if (!(TTF_Init() == 0))
+	{
+		printf("Failed to inialize SDL_ttf: %s\n", TTF_GetError());
 		return false;
 	}
 	window = SDL_CreateWindow(
@@ -54,6 +63,18 @@ bool init()
 		return false;
 	}
 
+	// load font
+	font = TTF_OpenFont("assets/arcadeclassic.ttf", 14);
+	if (!font)
+	{
+		printf("Failed to load arcadeclassic.ttf: %s\n", TTF_GetError());
+		return false;
+	}
+	title.Init(font, renderer, "PACSAN", 255, 255, 255);
+	title.w *= 4;
+	title.h *= 4;
+	title.x = WIDTH / 2 - title.w / 2;
+	title.y = HEIGHT / 2 - title.h / 2;
 	// load sprites
 	SDL_Surface *loaded = IMG_Load("assets/sprites.png");
 	if (!loaded)
@@ -71,7 +92,6 @@ bool init()
 
 	// init sprites
 	Sprite::spritesheet = spritesheet;
-	Sprite::renderer = renderer;
 	for (int i = 0; i < 4; i++)
 	{
 		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
@@ -79,7 +99,7 @@ bool init()
 	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
 	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
-	sprites[SpriteCode::GHOST].SetColor(255, 40, 40);
+	sprites[SpriteCode::GHOST].SetColor(255, 60, 60);
 
 	// init tiles
 	for (int r = 0; r < ROWS; r++)
@@ -158,9 +178,9 @@ void loop(void *arg)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
 	stage.Draw(renderer);
-	pacsan.Draw();
-	ghost.Draw();
-
+	pacsan.Draw(renderer);
+	ghost.Draw(renderer);
+	title.Draw(renderer);
 	SDL_RenderPresent(renderer);
 }
 

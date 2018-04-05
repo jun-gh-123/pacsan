@@ -28,7 +28,7 @@ void Stage::Init(
 		{
 			if (tiles[r * COLS + c])
 			{
-				block->Render(c * BLOCKSIZE, r * BLOCKSIZE);
+				block->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			}
 		}
 	}
