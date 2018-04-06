@@ -2,8 +2,7 @@
 
 Stage::~Stage()
 {
-	if (this->blocksTexture)
-	{
+	if (this->blocksTexture) {
 		SDL_DestroyTexture(this->blocksTexture);
 	}
 }
@@ -15,21 +14,17 @@ void Stage::Init(
 )
 {
 	this->tiles = tiles;
-	if (!this->blocksTexture)
-	{
+	if (!this->blocksTexture) {
 		this->blocksTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
 	}
 	SDL_SetRenderTarget(renderer, this->blocksTexture);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	Sprite *block = &sprites[SpriteCode::BLOCK];
-	for (int r = 0; r < ROWS; r++)
-	{
-		for (int c = 0; c < COLS; c++)
-		{
+	for (int r = 0; r < ROWS; r++) {
+		for (int c = 0; c < COLS; c++) {
 			int tilecode = tiles[r * COLS + c];
-			if (tilecode == TileCode::BLOCK)
-			{
+			if (tilecode == TileCode::BLOCK) {
 				block->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			}
 		}
@@ -41,12 +36,10 @@ int Stage::GetTile(
 	int row, int col
 )
 {
-	if (row < 0 || row >= ROWS)
-	{
+	if (row < 0 || row >= ROWS) {
 		return TileCode::EMPTY;
 	}
-	if (col < 0 || col >= COLS)
-	{
+	if (col < 0 || col >= COLS) {
 		return TileCode::EMPTY;
 	}
 	return this->tiles[row * COLS + col];
@@ -70,17 +63,12 @@ void Stage::Draw(
 	// draw pellets
 	Sprite *pellet = &sprites[SpriteCode::PELLET];
 	Sprite *superPellet = &sprites[SpriteCode::SUPER_PELLET];
-	for (int r = 0; r < ROWS; r++)
-	{
-		for (int c = 0; c < COLS; c++)
-		{
+	for (int r = 0; r < ROWS; r++) {
+		for (int c = 0; c < COLS; c++) {
 			int tilecode = this->tiles[r * COLS + c];
-			if (tilecode == TileCode::PELLET)
-			{
+			if (tilecode == TileCode::PELLET) {
 				pellet->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
-			}
-			else if (tilecode == TileCode::SUPER_PELLET)
-			{
+			} else if (tilecode == TileCode::SUPER_PELLET) {
 				superPellet->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			}
 		}

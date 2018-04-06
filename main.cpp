@@ -11,6 +11,7 @@
 
 // project libraries
 #include "params.hpp"
+#include "levels.hpp"
 #include "Game.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
@@ -66,18 +67,17 @@ bool init()
 	}
 
 	// load font, init texts
-	font = TTF_OpenFont("assets/arcadeclassic.ttf", 14);
+	font = TTF_OpenFont("assets/8bitOperatorPlus8-Regular.ttf", 14);
 	if (!font) {
-		printf("Failed to load arcadeclassic.ttf: %s\n", TTF_GetError());
+		printf("Failed to load font: %s\n", TTF_GetError());
 		return false;
 	}
-	title.Init(font, renderer, "PACSAN");
+	title.Init(font, renderer, "PAC-SAN");
 	title.scale = 4.0f;
 	title.x = WIDTH / 2 - title.GetWidth() / 2;
 	title.y = HEIGHT / 2 - title.GetHeight() / 2;
 	scoreText.Init(font, renderer, &game.score);
 	scoreText.scale = 2.0f;
-	scoreText.x = 5;
 	// load sprites
 	SDL_Surface *loaded = IMG_Load("assets/sprites.png");
 	if (!loaded) {
