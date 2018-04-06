@@ -1,6 +1,6 @@
 NAME = pacsan
 CC = g++
-INCLUDE_FLAGS = -Iinclude
+INCLUDE_FLAGS = -Iinclude -Isrc
 COMPILER_FLAGS = -Wall -g
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 BUILD_DIR = build

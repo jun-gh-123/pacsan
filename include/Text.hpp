@@ -9,17 +9,26 @@
 #endif
 
 class Text {
-	public:
+	protected:
 		SDL_Texture *texture;
-		int x = 0, y = 0;
+		void CreateTexture(
+			TTF_Font *font,
+			SDL_Renderer *renderer,
+			const char *text
+		);
 		int w = 0, h = 0;
-		double scale = 1.0f;
+	public:
+		int x = 0, y = 0;
+		float scale = 1.0f;
+		Uint8 r, g, b;
 		void Init(
 			TTF_Font *font,
 			SDL_Renderer *renderer,
 			const char *text,
-			Uint8 r, Uint8 g, Uint8 b
+			Uint8 r = 255, Uint8 g = 255, Uint8 b = 255
 		);
+		int GetWidth();
+		int GetHeight();
 		void Draw(SDL_Renderer *renderer);
 };
 

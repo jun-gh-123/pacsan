@@ -1,21 +1,22 @@
+// standard libraries
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #ifdef __EMSCRIPTEN__
 #include <SDL/SDL_ttf.h>
+#include <emscripten.h>
 #else
 #include <SDL2/SDL_ttf.h>
 #endif
+
+// project libraries
 #include "params.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
 #include "Ghost.hpp"
 #include "Stage.hpp"
 #include "Text.hpp"
-
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+#include "VariableText.hpp"
 
 SDL_Window *window = 0;
 SDL_Renderer *renderer = 0;
@@ -26,23 +27,22 @@ Pacsan pacsan;
 Ghost ghost;
 Stage stage;
 Text title;
+VariableText<int> vartext;
+int test = 0, count = 0;
 int tiles[ROWS * COLS];
 bool quit = false;
 
 bool init()
 {
-	if (!(SDL_Init(SDL_INIT_VIDEO) == 0))
-	{
+	if (!(SDL_Init(SDL_INIT_VIDEO) == 0)) {
 		printf("Failed to initialize SDL: %s\n", SDL_GetError());
 		return false;
 	}
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-	{
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		printf("Failed to initialize SDL_Image: %s\n", IMG_GetError());
 		return false;
 	}
-	if (!(TTF_Init() == 0))
-	{
+	if (!(TTF_Init() == 0)) {
 		printf("Failed to inialize SDL_ttf: %s\n", TTF_GetError());
 		return false;
 	}
@@ -52,51 +52,46 @@ bool init()
 		WIDTH, HEIGHT,
 		SDL_WINDOW_SHOWN
 	);
-	if (!window)
-	{
+	if (!window) {
 		printf("Failed to create SDL window: %s\n", SDL_GetError());
 		return false;
 	}
 	renderer = SDL_CreateRenderer(
 		window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
 	);
-	if (!renderer)
-	{
+	if (!renderer) {
 		printf("Failed to create SDL renderer: %s\n", SDL_GetError());
 		return false;
 	}
 
-	// load font
+	// load font, init texts
 	font = TTF_OpenFont("assets/arcadeclassic.ttf", 14);
-	if (!font)
-	{
+	if (!font) {
 		printf("Failed to load arcadeclassic.ttf: %s\n", TTF_GetError());
 		return false;
 	}
-	title.Init(font, renderer, "PACSAN", 255, 255, 255);
-	title.w *= 4;
-	title.h *= 4;
-	title.x = WIDTH / 2 - title.w / 2;
-	title.y = HEIGHT / 2 - title.h / 2;
+	title.Init(font, renderer, "PACSAN");
+	title.scale = 4.0f;
+	title.x = WIDTH / 2 - title.GetWidth() / 2;
+	title.y = HEIGHT / 2 - title.GetHeight() / 2;
+	vartext.Init(font, renderer, &test);
+	vartext.scale = 2.0f;
 	// load sprites
 	SDL_Surface *loaded = IMG_Load("assets/sprites.png");
-	if (!loaded)
-	{
+	if (!loaded) {
 		printf("Failed to load sprites.png: %s\n", IMG_GetError());
 		return false;
 	}
 	spritesheet = SDL_CreateTextureFromSurface(renderer, loaded);
 	SDL_FreeSurface(loaded);
-	if (!spritesheet)
-	{
+	if (!spritesheet) {
 		printf("Failed to create texture from sprites.png: %s\n", SDL_GetError());
 		return false;
 	}
 
 	// init sprites
 	Sprite::spritesheet = spritesheet;
-	for (int i = 0; i < 8; i++)
-	{
+	for (int i = 0; i < 8; i++) {
 		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
 	}
 	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
@@ -105,16 +100,11 @@ bool init()
 	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
 
 	// init tiles
-	for (int r = 0; r < ROWS; r++)
-	{
-		for (int c = 0; c < COLS; c++)
-		{
-			if (c == 0 || c == COLS - 1 || r == 0 || r == ROWS - 1 || (r % 2 == 0 && c% 2 == 0))
-			{
+	for (int r = 0; r < ROWS; r++) {
+		for (int c = 0; c < COLS; c++) {
+			if (c == 0 || c == COLS - 1 || r == 0 || r == ROWS - 1 || (r % 2 == 0 && c% 2 == 0)) {
 				tiles[r * COLS + c] = 1;
-			}
-			else
-			{
+			} else {
 				tiles[r * COLS + c] = 2;
 			}
 		}
@@ -151,22 +141,17 @@ void loop(void *arg)
 {
 	// update
 	SDL_Event e;
-	while (SDL_PollEvent(&e))
-	{
-		if (e.type == SDL_QUIT)
-		{
+	while (SDL_PollEvent(&e)) {
+		if (e.type == SDL_QUIT) {
 			quit = true;
 		}
-		if (e.type == SDL_KEYDOWN)
-		{
-			if (e.key.keysym.sym == SDLK_ESCAPE)
-			{
+		if (e.type == SDL_KEYDOWN) {
+			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
 			}
 		}
 	}
-	if (quit)
-	{
+	if (quit) {
 		#ifdef __EMSCRIPTEN__
 		emscripten_cancel_main_loop();
 		#endif
@@ -185,19 +170,23 @@ void loop(void *arg)
 	pacsan.Draw(renderer);
 	ghost.Draw(renderer);
 	title.Draw(renderer);
+	vartext.Draw(font, renderer);
 	SDL_RenderPresent(renderer);
+
+	if (++count > 10) {
+		test += 10;
+		count = 0;
+	}
 }
 
 int main()
 {
-	if (init())
-	{
+	if (init()) {
 		// loop
 		#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop_arg(loop, NULL, -1, 1);
 		#else
-			while (!quit)
-			{
+			while (!quit) {
 				loop(NULL);
 			}
 		#endif
