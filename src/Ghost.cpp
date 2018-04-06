@@ -12,8 +12,7 @@ void Ghost::Update(
 	Stage *stage
 )
 {
-	switch (this->direction)
-	{
+	switch (this->direction) {
 		case Direction::UP:
 			this->y -= this->spd;
 			break;
@@ -26,37 +25,33 @@ void Ghost::Update(
 		case Direction::RIGHT:
 			this->x += this->spd;
 			break;
+		default:
+			break;
 	}
 
-	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0)
-	{
+	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
 		int row = this->y / BLOCKSIZE;
 		int col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
-		if (row < 0)
-		{
+		if (row < 0) {
 			this->y = ROWS * BLOCKSIZE;
 			offscreen = true;
 		}
-		if (row >= ROWS)
-		{
+		if (row >= ROWS) {
 			this->y = -BLOCKSIZE;
 			offscreen = true;
 		}
-		if (col < 0)
-		{
+		if (col < 0) {
 			this->x = COLS * BLOCKSIZE;
 			offscreen = true;
 		}
-		if (col >= COLS)
-		{
+		if (col >= COLS) {
 			this->x = -BLOCKSIZE;
 			offscreen = true;
 		}
 
-		if (offscreen)
-		{
+		if (offscreen) {
 			return;
 		}
 
@@ -65,14 +60,12 @@ void Ghost::Update(
 		std::random_device rd;
 		std::mt19937 rng(rd());
 		std::uniform_int_distribution<int> uni(0, 4);
-		while (!found)
-		{
+		while (!found) {
 			int nextrow = row;
 			int nextcol = col;
 			Direction nextDirection = (Direction) uni(rng);
 
-			switch (nextDirection)
-			{
+			switch (nextDirection) {
 				case Direction::UP:
 					nextrow--;
 					break;
@@ -85,10 +78,11 @@ void Ghost::Update(
 				case Direction::RIGHT:
 					nextcol++;
 					break;
+				default:
+					break;
 			}
 
-			if (stage->GetTile(nextrow, nextcol) != TileCode::BLOCK)
-			{
+			if (stage->GetTile(nextrow, nextcol) != TileCode::BLOCK) {
 				found = true;
 				this->nextDirection = nextDirection;
 			}

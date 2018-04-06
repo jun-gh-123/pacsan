@@ -7,44 +7,35 @@ void Pacsan::Init()
 
 void Pacsan::Update(
 	const Uint8 *keystate,
-	Stage *stage
+	Stage *stage,
+	Game *game
 )
 {
-	if (keystate[SDL_SCANCODE_UP])
-	{
+	if (keystate[SDL_SCANCODE_UP]) {
 		this->nextDirection = Direction::UP;
 	}
-	if (keystate[SDL_SCANCODE_DOWN])
-	{
+	if (keystate[SDL_SCANCODE_DOWN]) {
 		this->nextDirection = Direction::DOWN;
 	}
-	if (keystate[SDL_SCANCODE_LEFT])
-	{
+	if (keystate[SDL_SCANCODE_LEFT]) {
 		this->nextDirection = Direction::LEFT;
 	}
-	if (keystate[SDL_SCANCODE_RIGHT])
-	{
+	if (keystate[SDL_SCANCODE_RIGHT]) {
 		this->nextDirection = Direction::RIGHT;
 	}
 
-	if (this->moving)
-	{
+	if (this->moving) {
 		this->animateCount++;
-		if (this->animateCount >= 12)
-		{
-			if (this->spriteCode == SpriteCode::PACSAN_OPEN)
-			{
+		if (this->animateCount >= 12) {
+			if (this->spriteCode == SpriteCode::PACSAN_OPEN) {
 				this->SetSprite(SpriteCode::PACSAN_CLOSE);
-			}
-			else
-			{
+			} else {
 				this->SetSprite(SpriteCode::PACSAN_OPEN);
 			}
 			this->animateCount = 0;
 		}
 
-		switch (this->direction)
-		{
+		switch (this->direction) {
 			case Direction::UP:
 				this->y -= this->spd;
 				break;
@@ -57,45 +48,46 @@ void Pacsan::Update(
 			case Direction::RIGHT:
 				this->x += this->spd;
 				break;
+			default:
+				break;
 		}
 	}
 
-	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0)
-	{
+	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
 		int row = this->y / BLOCKSIZE;
 		int col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
+		int tile = stage->GetTile(row, col);
+		if (tile == TileCode::PELLET) {
+			game->score += 10;
+		} else if (tile == TileCode::SUPER_PELLET) {
+			game->score += 50;
+		}
 		stage->SetTile(row, col, TileCode::EMPTY);
 
-		if (row < 0)
-		{
+		if (row < 0) {
 			this->y = ROWS * BLOCKSIZE;
 			offscreen = true;
 		}
-		if (row >= ROWS)
-		{
+		if (row >= ROWS) {
 			this->y = -BLOCKSIZE;
 			offscreen = true;
 		}
-		if (col < 0)
-		{
+		if (col < 0) {
 			this->x = COLS * BLOCKSIZE;
 			offscreen = true;
 		}
-		if (col >= COLS)
-		{
+		if (col >= COLS) {
 			this->x = -BLOCKSIZE;
 			offscreen = true;
 		}
 
-		if (offscreen)
-		{
+		if (offscreen) {
 			return;
 		}
 
-		switch (this->nextDirection)
-		{
+		switch (this->nextDirection) {
 			case Direction::UP:
 				row--;
 				break;
@@ -108,14 +100,14 @@ void Pacsan::Update(
 			case Direction::RIGHT:
 				col++;
 				break;
+			default:
+				break;
 		}
-		if (stage->GetTile(row, col) != TileCode::BLOCK)
-		{
+		if (stage->GetTile(row, col) != TileCode::BLOCK) {
 			this->direction = this->nextDirection;
 			this->nextDirection = this->direction;
 			this->moving = true;
-			switch (this->direction)
-			{
+			switch (this->direction) {
 				case Direction::UP:
 					this->angle = 270.0f;
 					break;
@@ -128,12 +120,12 @@ void Pacsan::Update(
 				case Direction::RIGHT:
 					this->angle = 0.0f;
 					break;
+				default:
+					this->moving = false;
+					break;
 			}
-		}
-		else
-		{
-			if (this->direction == this->nextDirection)
-			{
+		} else {
+			if (this->direction == this->nextDirection) {
 				this->moving = false;
 				this->SetSprite(SpriteCode::PACSAN_OPEN);
 			}

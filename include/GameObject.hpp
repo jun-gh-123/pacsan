@@ -8,13 +8,13 @@
 class GameObject {
 	protected:
 		enum class Direction {
-			UP, DOWN, LEFT, RIGHT
+			UP, DOWN, LEFT, RIGHT, NONE
 		};
 		Sprite *sprite;
 		int spriteCode;
 		int spd = 2;
-		Direction direction = Direction::LEFT;
-		Direction nextDirection = Direction::RIGHT;
+		Direction direction = Direction::NONE;
+		Direction nextDirection = Direction::NONE;
 	public:
 		static Sprite *sprites;
 		int x, y;
@@ -22,7 +22,6 @@ class GameObject {
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
 		virtual void Init() = 0;
 		void SetSprite(int spriteCode);
-		virtual void Update(const Uint8 *keystate, Stage *stage) = 0;
 		void Draw(SDL_Renderer *renderer);
 };
 

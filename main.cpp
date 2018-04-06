@@ -11,6 +11,7 @@
 
 // project libraries
 #include "params.hpp"
+#include "Game.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
 #include "Ghost.hpp"
@@ -22,13 +23,13 @@ SDL_Window *window = 0;
 SDL_Renderer *renderer = 0;
 SDL_Texture *spritesheet = 0;
 TTF_Font *font = 0;
+Game game;
 Sprite sprites[8];
 Pacsan pacsan;
 Ghost ghost;
 Stage stage;
 Text title;
-VariableText<int> vartext;
-int test = 0, count = 0;
+VariableText<int> scoreText;
 int tiles[ROWS * COLS];
 bool quit = false;
 
@@ -74,8 +75,9 @@ bool init()
 	title.scale = 4.0f;
 	title.x = WIDTH / 2 - title.GetWidth() / 2;
 	title.y = HEIGHT / 2 - title.GetHeight() / 2;
-	vartext.Init(font, renderer, &test);
-	vartext.scale = 2.0f;
+	scoreText.Init(font, renderer, &game.score);
+	scoreText.scale = 2.0f;
+	scoreText.x = 5;
 	// load sprites
 	SDL_Surface *loaded = IMG_Load("assets/sprites.png");
 	if (!loaded) {
@@ -109,6 +111,7 @@ bool init()
 			}
 		}
 	}
+	tiles[COLS + 1] = 0;
 	tiles[(ROWS / 2) * COLS + 0] = 0;
 	tiles[(ROWS / 2) * COLS + COLS - 1] = 0;
 	tiles[0 + COLS / 2] = 0;
@@ -160,7 +163,7 @@ void loop(void *arg)
 
 	// update
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-	pacsan.Update(keystate, &stage);
+	pacsan.Update(keystate, &stage, &game);
 	ghost.Update(keystate, &stage);
 
 	// render
@@ -170,13 +173,8 @@ void loop(void *arg)
 	pacsan.Draw(renderer);
 	ghost.Draw(renderer);
 	title.Draw(renderer);
-	vartext.Draw(font, renderer);
+	scoreText.Draw(font, renderer);
 	SDL_RenderPresent(renderer);
-
-	if (++count > 10) {
-		test += 10;
-		count = 0;
-	}
 }
 
 int main()
