@@ -7,11 +7,11 @@
 class Stage {
 	private:
 		SDL_Texture *blocksTexture = 0;
-		int *tiles;
+		int tiles[ROWS * COLS];
 		int heatmap[ROWS * COLS];
 	public:
 		~Stage();
-		void Init(SDL_Renderer *renderer, Sprite *sprites, int *tiles);
+		void LoadLevel(SDL_Renderer *renderer, Sprite *sprites, int level);
 		int GetTile(int row, int col);
 		void SetTile(int row, int col, int val);
 		void Draw(SDL_Renderer *renderer, Sprite *sprites);

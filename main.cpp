@@ -11,7 +11,6 @@
 
 // project libraries
 #include "params.hpp"
-#include "levels.hpp"
 #include "Game.hpp"
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
@@ -31,7 +30,6 @@ Ghost ghost;
 Stage stage;
 Text title;
 VariableText<int> scoreText;
-int tiles[ROWS * COLS];
 bool quit = false;
 
 bool init()
@@ -101,23 +99,7 @@ bool init()
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
 	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
 
-	// init tiles
-	for (int r = 0; r < ROWS; r++) {
-		for (int c = 0; c < COLS; c++) {
-			if (c == 0 || c == COLS - 1 || r == 0 || r == ROWS - 1 || (r % 2 == 0 && c% 2 == 0)) {
-				tiles[r * COLS + c] = 1;
-			} else {
-				tiles[r * COLS + c] = 2;
-			}
-		}
-	}
-	tiles[COLS + 1] = 0;
-	tiles[(ROWS / 2) * COLS + 0] = 0;
-	tiles[(ROWS / 2) * COLS + COLS - 1] = 0;
-	tiles[0 + COLS / 2] = 0;
-	tiles[(ROWS - 1) * COLS + COLS / 2] = 0;
-	tiles[9 * COLS + 9] = 3;
-	stage.Init(renderer, sprites, tiles);
+	stage.LoadLevel(renderer, sprites, 1);
 
 	// init gameobjects
 	GameObject::sprites = sprites;
