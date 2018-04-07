@@ -2,6 +2,34 @@
 
 Sprite *GameObject::sprites = 0;
 
+int GameObject::getTileInDirection(
+	Direction dir,
+	Stage *stage
+)
+{
+	int row = this->y / BLOCKSIZE;
+	int col = this->x / BLOCKSIZE;
+
+	switch (dir) {
+		case Direction::UP:
+			row--;
+			break;
+		case Direction::DOWN:
+			row++;
+			break;
+		case Direction::LEFT:
+			col--;
+			break;
+		case Direction::RIGHT:
+			col++;
+			break;
+		default:
+			break;
+	}
+
+	return stage->GetTile(row, col);
+}
+
 void GameObject::SetSprite(
 	int spriteCode
 )

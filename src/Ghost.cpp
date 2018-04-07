@@ -3,7 +3,6 @@
 
 void Ghost::Init()
 {
-	this->spd = 2;
 	this->SetSprite(SpriteCode::GHOST_CHASE);
 }
 
@@ -61,28 +60,9 @@ void Ghost::Update(
 		std::mt19937 rng(rd());
 		std::uniform_int_distribution<int> uni(0, 4);
 		while (!found) {
-			int nextrow = row;
-			int nextcol = col;
 			Direction nextDirection = (Direction) uni(rng);
 
-			switch (nextDirection) {
-				case Direction::UP:
-					nextrow--;
-					break;
-				case Direction::DOWN:
-					nextrow++;
-					break;
-				case Direction::LEFT:
-					nextcol--;
-					break;
-				case Direction::RIGHT:
-					nextcol++;
-					break;
-				default:
-					break;
-			}
-
-			if (stage->GetTile(nextrow, nextcol) != TileCode::BLOCK) {
+			if (getTileInDirection(nextDirection, stage) != TileCode::BLOCK) {
 				found = true;
 				this->nextDirection = nextDirection;
 			}

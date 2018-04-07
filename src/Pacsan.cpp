@@ -87,23 +87,7 @@ void Pacsan::Update(
 			return;
 		}
 
-		switch (this->nextDirection) {
-			case Direction::UP:
-				row--;
-				break;
-			case Direction::DOWN:
-				row++;
-				break;
-			case Direction::LEFT:
-				col--;
-				break;
-			case Direction::RIGHT:
-				col++;
-				break;
-			default:
-				break;
-		}
-		if (stage->GetTile(row, col) != TileCode::BLOCK) {
+		if (getTileInDirection(this->nextDirection, stage) != TileCode::BLOCK) {
 			this->direction = this->nextDirection;
 			this->nextDirection = this->direction;
 			this->moving = true;
@@ -125,7 +109,7 @@ void Pacsan::Update(
 					break;
 			}
 		} else {
-			if (this->direction == this->nextDirection) {
+			if (getTileInDirection(this->direction, stage) == TileCode::BLOCK) {
 				this->moving = false;
 				this->SetSprite(SpriteCode::PACSAN_OPEN);
 			}

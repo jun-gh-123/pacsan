@@ -50,6 +50,12 @@ void Stage::SetTile(
 	int row, int col, int val
 )
 {
+	if (row < 0 || row >= ROWS) {
+		return;
+	}
+	if (col < 0 || col >= COLS) {
+		return;
+	}
 	this->tiles[row * COLS + col] = val;
 }
 

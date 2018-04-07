@@ -12,9 +12,10 @@ class GameObject {
 		};
 		Sprite *sprite;
 		int spriteCode;
-		int spd = 2;
+		int spd = 4;
 		Direction direction = Direction::NONE;
 		Direction nextDirection = Direction::NONE;
+		int getTileInDirection(Direction dir, Stage *stage);
 	public:
 		static Sprite *sprites;
 		int x, y;
