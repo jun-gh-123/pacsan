@@ -4,7 +4,7 @@ Sprite *GameObject::sprites = 0;
 
 int GameObject::getTileInDirection(
 	Direction dir,
-	Stage *stage
+	Game *game
 )
 {
 	int row = this->y / BLOCKSIZE;
@@ -27,7 +27,7 @@ int GameObject::getTileInDirection(
 			break;
 	}
 
-	return stage->GetTile(row, col);
+	return game->GetTile(row, col);
 }
 
 void GameObject::SetSprite(

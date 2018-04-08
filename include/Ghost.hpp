@@ -6,7 +6,7 @@
 class Ghost : public GameObject {
 	public:
 		void Init();
-		void Update(const Uint8 *keystate, Stage *stage);
+		void Update(const Uint8 *keystate, Game *game);
 };
 
 #endif

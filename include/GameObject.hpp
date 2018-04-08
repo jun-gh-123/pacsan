@@ -3,7 +3,7 @@
 
 #include "params.hpp"
 #include "Sprite.hpp"
-#include "Stage.hpp"
+#include "Game.hpp"
 
 class GameObject {
 	protected:
@@ -15,7 +15,7 @@ class GameObject {
 		int spd = 4;
 		Direction direction = Direction::NONE;
 		Direction nextDirection = Direction::NONE;
-		int getTileInDirection(Direction dir, Stage *stage);
+		int getTileInDirection(Direction dir, Game *game);
 	public:
 		static Sprite *sprites;
 		int x, y;

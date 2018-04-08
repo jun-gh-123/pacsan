@@ -8,7 +8,7 @@ void Ghost::Init()
 
 void Ghost::Update(
 	const Uint8 *keystate,
-	Stage *stage
+	Game *game
 )
 {
 	switch (this->direction) {
@@ -62,7 +62,7 @@ void Ghost::Update(
 		while (!found) {
 			Direction nextDirection = (Direction) uni(rng);
 
-			if (getTileInDirection(nextDirection, stage) != TileCode::BLOCK) {
+			if (getTileInDirection(nextDirection, game) != TileCode::BLOCK) {
 				found = true;
 				this->nextDirection = nextDirection;
 			}

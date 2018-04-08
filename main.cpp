@@ -15,7 +15,6 @@
 #include "Sprite.hpp"
 #include "Pacsan.hpp"
 #include "Ghost.hpp"
-#include "Stage.hpp"
 #include "Text.hpp"
 #include "VariableText.hpp"
 
@@ -27,7 +26,6 @@ Game game;
 Sprite sprites[8];
 Pacsan pacsan;
 Ghost ghost;
-Stage stage;
 Text title;
 VariableText<int> scoreText;
 bool quit = false;
@@ -99,7 +97,8 @@ bool init()
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
 	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
 
-	stage.LoadLevel(renderer, sprites, 1);
+	// init game
+	game.LoadLevel(renderer, sprites, 1);
 
 	// init gameobjects
 	GameObject::sprites = sprites;
@@ -145,13 +144,13 @@ void loop(void *arg)
 
 	// update
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-	pacsan.Update(keystate, &stage, &game);
-	ghost.Update(keystate, &stage);
+	pacsan.Update(keystate, &game);
+	ghost.Update(keystate, &game);
 
 	// render
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
 	SDL_RenderClear(renderer);
-	stage.Draw(renderer, sprites);
+	game.Draw(renderer, sprites);
 	pacsan.Draw(renderer);
 	ghost.Draw(renderer);
 	title.Draw(renderer);
