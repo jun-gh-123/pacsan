@@ -48,6 +48,13 @@ void Game::NextLevel()
 	}
 }
 
+void Game::NewLife()
+{
+	this->paused = false;
+	this->SetTexts("", "");
+	this->lives--;
+}
+
 void Game::LoadLevel(
 	int level
 )

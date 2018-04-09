@@ -5,7 +5,7 @@
 
 class Ghost : public GameObject {
 	public:
-		void Init();
+		void Init(int spriteCode);
 		void Update(const Uint8 *keystate, Game *game);
 };
 

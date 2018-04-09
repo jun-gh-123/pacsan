@@ -9,6 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
+#include "params.hpp"
 #include "Sprite.hpp"
 
 class Manager {
@@ -17,7 +18,7 @@ class Manager {
 		SDL_Renderer *renderer = 0;
 		SDL_Texture *spritesheet = 0;
 		TTF_Font *font = 0;
-		Sprite sprites[8];
+		Sprite sprites[SpriteCode::_SIZE];
 		bool Init();
 		void Quit();
 		void RenderClear(Uint8 r, Uint8 g, Uint8 b);

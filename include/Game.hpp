@@ -31,6 +31,7 @@ class Game {
 		void Init();
 		void SetTexts(const char *header, const char *subtext);
 		void NextLevel();
+		void NewLife();
 		void LoadLevel(int level);
 		int GetTile(int row, int col);
 		void SetTile(int row, int col, int val);

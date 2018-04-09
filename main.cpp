@@ -23,7 +23,7 @@ Manager gManager;
 
 Game game;
 Pacsan pacsan;
-Ghost ghost;
+Ghost ghosts[4];
 VariableText<int> scoreText;
 bool quit = false;
 
@@ -41,9 +41,10 @@ bool init()
 	// init gameobjects
 	pacsan.Init();
 	pacsan.Reset(game.startRow, game.startCol);
-	ghost.Init();
-	ghost.x = WIDTH - 2 * BLOCKSIZE;
-	ghost.y = BLOCKSIZE;
+	for (int i = 0; i < 4; i++) {
+		ghosts[i].Init(SpriteCode::GHOST_RED + i);
+		ghosts[i].Reset(ROWS / 2, COLS / 2);
+	}
 
 	return true;
 }
@@ -60,9 +61,16 @@ void loop(void *arg)
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
 			}
-			if (e.key.keysym.sym == SDLK_z) {
-				game.NextLevel();
+			if (game.paused && e.key.keysym.sym == SDLK_z) {
+				if (game.levelCleared) {
+					game.NextLevel();
+				} else {
+					game.NewLife();
+				}
 				pacsan.Reset(game.startRow, game.startCol);
+				for (int i = 0; i < 4; i++) {
+					ghosts[i].Reset(ROWS / 2, COLS / 2);
+				}
 			}
 		}
 	}
@@ -77,14 +85,27 @@ void loop(void *arg)
 		// update
 		const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 		pacsan.Update(keystate, &game);
-		ghost.Update(keystate, &game);
+
+		bool collided = false;
+		for (int i = 0; i < 4 && !collided; i++) {
+			ghosts[i].Update(keystate, &game);
+			if (pacsan.IsColliding(&ghosts[i])) {
+				collided = true;
+			}
+		}
+		if (collided) {
+			game.SetTexts("DEAD", "");
+			game.paused = true;
+		}
 	}
 
 	// render
 	gManager.RenderClear(0, 0, 0);
 	game.Draw();
 	pacsan.Draw();
-	ghost.Draw();
+	for (int i = 0; i < 4; i++) {
+		ghosts[i].Draw();
+	}
 	scoreText.Draw();
 	gManager.RenderPresent();
 }

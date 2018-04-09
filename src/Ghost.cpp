@@ -1,9 +1,12 @@
 #include <random>
 #include "Ghost.hpp"
 
-void Ghost::Init()
+void Ghost::Init(
+	int spriteCode
+)
 {
-	this->SetSprite(SpriteCode::GHOST_CHASE);
+	this->SetSprite(spriteCode);
+	this->spd = 2;
 }
 
 void Ghost::Update(
@@ -29,8 +32,8 @@ void Ghost::Update(
 	}
 
 	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
-		int row = this->y / BLOCKSIZE;
-		int col = this->x / BLOCKSIZE;
+		int row = this->row = this->y / BLOCKSIZE;
+		int col = this->col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
 		if (row < 0) {

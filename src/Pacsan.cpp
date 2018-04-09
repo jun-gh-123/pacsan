@@ -9,15 +9,10 @@ void Pacsan::Reset(
 	int row, int col
 )
 {
-	this->x = col * BLOCKSIZE;
-	this->y = row * BLOCKSIZE;
-	this->direction = Direction::NONE;
-	this->nextDirection = Direction::NONE;
-	this->angle = 0.0f;
+	GameObject::Reset(row, col);
 	this->animateCount = 0;
 	this->moving = false;
-	this->spriteCode = SpriteCode::PACSAN_OPEN;
-	this->SetSprite(this->spriteCode);
+	this->SetSprite(SpriteCode::PACSAN_OPEN);
 }
 
 void Pacsan::Update(
@@ -68,8 +63,8 @@ void Pacsan::Update(
 	}
 
 	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
-		int row = this->y / BLOCKSIZE;
-		int col = this->x / BLOCKSIZE;
+		int row = this->row = this->y / BLOCKSIZE;
+		int col = this->col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
 		game->EatPellet(row, col);

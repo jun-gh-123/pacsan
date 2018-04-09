@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Manager.hpp"
-#include "params.hpp"
 
 bool Manager::Init()
 {
@@ -56,13 +55,20 @@ bool Manager::Init()
 
 	// init sprites
 	Sprite::spritesheet = spritesheet;
-	for (int i = 0; i < 8; i++) {
-		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
+	int x = 0;
+	for (int i = 0; i < SpriteCode::_SIZE; i++) {
+		sprites[i].Init(x * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
+		if (i < SpriteCode::GHOST_RED || i >= SpriteCode::GHOST_ORANGE) {
+			x++;
+		}
 	}
 	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
 	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
-	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
+	sprites[SpriteCode::GHOST_RED].SetColor(255, 95, 95);
+	sprites[SpriteCode::GHOST_PINK].SetColor(255, 180, 255);
+	sprites[SpriteCode::GHOST_CYAN].SetColor(0, 255, 255);
+	sprites[SpriteCode::GHOST_ORANGE].SetColor(255, 180, 80);
 
 	return true;
 }

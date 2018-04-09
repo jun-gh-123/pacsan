@@ -18,11 +18,13 @@ class GameObject {
 		int getTileInDirection(Direction dir, Game *game);
 	public:
 		int x, y;
+		int row, col;
 		double angle = 0.0f;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
-		virtual void Init() = 0;
+		void Reset(int row, int col);
 		void SetSprite(int spriteCode);
 		void Draw();
+		bool IsColliding(GameObject *target);
 };
 
 #endif

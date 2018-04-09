@@ -1,6 +1,18 @@
 #include "GameObject.hpp"
 #include "globals.hpp"
 
+void GameObject::Reset(
+	int row, int col
+)
+{
+	this->x = col * BLOCKSIZE;
+	this->y = row * BLOCKSIZE;
+	this->direction = Direction::NONE;
+	this->nextDirection = Direction::NONE;
+	this->angle = 0.0f;
+}
+
+
 int GameObject::getTileInDirection(
 	Direction dir,
 	Game *game
@@ -45,4 +57,11 @@ void GameObject::Draw()
 		this->angle,
 		this->flip
 	);
+}
+
+bool GameObject::IsColliding(
+	GameObject *target
+)
+{
+	return target->row == this->row && target->col == this->col;
 }
