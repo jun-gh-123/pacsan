@@ -23,11 +23,8 @@ void Game::SetTexts(
 	const char *subtextstr
 )
 {
-	TTF_Font *font = gManager.font;
-	SDL_Renderer *renderer = gManager.renderer;
-
-	this->header.Init(font, renderer, headerstr);
-	this->subtext.Init(font, renderer, subtextstr);
+	this->header.Set(headerstr);
+	this->subtext.Set(subtextstr);
 
 	this->header.scale = 4.0f;
 	this->header.x = WIDTH / 2 - this->header.GetWidth() / 2;
@@ -166,6 +163,6 @@ void Game::Draw()
 	}
 
 	// draw texts
-	this->header.Draw(renderer);
-	this->subtext.Draw(renderer);
+	this->header.Draw();
+	this->subtext.Draw();
 }

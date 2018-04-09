@@ -21,15 +21,13 @@ class Text {
 		int x = 0, y = 0;
 		float scale = 1.0f;
 		Uint8 r, g, b;
-		void Init(
-			TTF_Font *font,
-			SDL_Renderer *renderer,
+		void Set(
 			const char *text,
 			Uint8 r = 255, Uint8 g = 255, Uint8 b = 255
 		);
 		int GetWidth();
 		int GetHeight();
-		void Draw(SDL_Renderer *renderer);
+		void Draw();
 };
 
 #endif

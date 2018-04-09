@@ -1,4 +1,5 @@
 #include "Text.hpp"
+#include "globals.hpp"
 
 void Text::CreateTexture(
 	TTF_Font *font,
@@ -23,9 +24,7 @@ void Text::CreateTexture(
 	SDL_FreeSurface(loaded);
 }
 
-void Text::Init(
-	TTF_Font *font,
-	SDL_Renderer *renderer,
+void Text::Set(
 	const char *text,
 	Uint8 r, Uint8 g, Uint8 b
 )
@@ -33,7 +32,7 @@ void Text::Init(
 	this->r = r;
 	this->g = g;
 	this->b = b;
-	this->CreateTexture(font, renderer, text);
+	this->CreateTexture(gManager.font, gManager.renderer, text);
 }
 
 int Text::GetWidth()
@@ -46,14 +45,12 @@ int Text::GetHeight()
 	return (int)(this->h * this->scale);
 }
 
-void Text::Draw(
-	SDL_Renderer *renderer
-)
+void Text::Draw()
 {
 	SDL_Rect dstrect = {
 		this->x, this->y,
 		this->GetWidth(), this->GetHeight()
 	};
 	SDL_SetTextureColorMod(this->texture, this->r, this->g, this->b);
-	SDL_RenderCopy(renderer, this->texture, NULL, &dstrect);
+	SDL_RenderCopy(gManager.renderer, this->texture, NULL, &dstrect);
 }

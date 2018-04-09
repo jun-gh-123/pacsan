@@ -74,6 +74,7 @@ void Manager::Quit()
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 	IMG_Quit();
+	TTF_Quit();
 }
 
 void Manager::RenderClear(

@@ -32,7 +32,7 @@ bool init()
 	if (!gManager.Init()) {
 		return false;
 	}
-	scoreText.Init(gManager.font, gManager.renderer, &game.score);
+	scoreText.Init(&game.score);
 	scoreText.scale = 2.0f;
 
 	// init game
@@ -85,7 +85,7 @@ void loop(void *arg)
 	game.Draw();
 	pacsan.Draw();
 	ghost.Draw();
-	scoreText.Draw(gManager.font, gManager.renderer);
+	scoreText.Draw();
 	gManager.RenderPresent();
 }
 

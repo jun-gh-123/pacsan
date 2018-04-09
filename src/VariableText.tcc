@@ -1,10 +1,9 @@
 #include <string>
 #include "VariableText.hpp"
+#include "globals.hpp"
 
 template <class VarType>
 void VariableText<VarType>::Init(
-	TTF_Font *font,
-	SDL_Renderer *renderer,
 	VarType *var,
 	Uint8 r, Uint8 g, Uint8 b
 )
@@ -15,19 +14,16 @@ void VariableText<VarType>::Init(
 	this->g = g;
 	this->b = b;
 	std::string str = std::to_string(*this->var);
-	this->CreateTexture(font, renderer, str.c_str());
+	this->CreateTexture(gManager.font, gManager.renderer, str.c_str());
 }
 
 template <class VarType>
-void VariableText<VarType>::Draw(
-	TTF_Font *font,
-	SDL_Renderer *renderer
-)
+void VariableText<VarType>::Draw()
 {
 	if (*this->var != this->prev) {
 		std::string str = std::to_string(*this->var);
-		this->CreateTexture(font, renderer, str.c_str());
+		this->CreateTexture(gManager.font, gManager.renderer, str.c_str());
 	}
-	Text::Draw(renderer);
+	Text::Draw();
 }
 
