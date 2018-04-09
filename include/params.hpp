@@ -25,7 +25,8 @@ namespace TileCode {
 		EMPTY = 0,
 		BLOCK,
 		PELLET,
-		SUPER_PELLET
+		SUPER_PELLET,
+		PACSAN
 	};
 };
 

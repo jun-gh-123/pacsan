@@ -11,114 +11,40 @@
 
 // project libraries
 #include "params.hpp"
+#include "Manager.hpp"
 #include "Game.hpp"
-#include "Sprite.hpp"
 #include "Pacsan.hpp"
 #include "Ghost.hpp"
 #include "Text.hpp"
 #include "VariableText.hpp"
 
-SDL_Window *window = 0;
-SDL_Renderer *renderer = 0;
-SDL_Texture *spritesheet = 0;
-TTF_Font *font = 0;
+Manager manager;
 Game game;
-Sprite sprites[8];
 Pacsan pacsan;
 Ghost ghost;
-Text title;
 VariableText<int> scoreText;
 bool quit = false;
 
 bool init()
 {
-	if (!(SDL_Init(SDL_INIT_VIDEO) == 0)) {
-		printf("Failed to initialize SDL: %s\n", SDL_GetError());
+	if (!manager.Init()) {
 		return false;
 	}
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		printf("Failed to initialize SDL_Image: %s\n", IMG_GetError());
-		return false;
-	}
-	if (!(TTF_Init() == 0)) {
-		printf("Failed to inialize SDL_ttf: %s\n", TTF_GetError());
-		return false;
-	}
-	window = SDL_CreateWindow(
-		"pacsan",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		WIDTH, HEIGHT,
-		SDL_WINDOW_SHOWN
-	);
-	if (!window) {
-		printf("Failed to create SDL window: %s\n", SDL_GetError());
-		return false;
-	}
-	renderer = SDL_CreateRenderer(
-		window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
-	if (!renderer) {
-		printf("Failed to create SDL renderer: %s\n", SDL_GetError());
-		return false;
-	}
-
-	// load font, init texts
-	font = TTF_OpenFont("assets/8bitOperatorPlus8-Regular.ttf", 14);
-	if (!font) {
-		printf("Failed to load font: %s\n", TTF_GetError());
-		return false;
-	}
-	title.Init(font, renderer, "PAC-SAN");
-	title.scale = 4.0f;
-	title.x = WIDTH / 2 - title.GetWidth() / 2;
-	title.y = HEIGHT / 2 - title.GetHeight() / 2;
-	scoreText.Init(font, renderer, &game.score);
+	scoreText.Init(manager.font, manager.renderer, &game.score);
 	scoreText.scale = 2.0f;
-	// load sprites
-	SDL_Surface *loaded = IMG_Load("assets/sprites.png");
-	if (!loaded) {
-		printf("Failed to load sprites.png: %s\n", IMG_GetError());
-		return false;
-	}
-	spritesheet = SDL_CreateTextureFromSurface(renderer, loaded);
-	SDL_FreeSurface(loaded);
-	if (!spritesheet) {
-		printf("Failed to create texture from sprites.png: %s\n", SDL_GetError());
-		return false;
-	}
-
-	// init sprites
-	Sprite::spritesheet = spritesheet;
-	for (int i = 0; i < 8; i++) {
-		sprites[i].Init(i * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
-	}
-	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
-	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
-	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
-	sprites[SpriteCode::GHOST_CHASE].SetColor(255, 60, 60);
 
 	// init game
-	game.LoadLevel(renderer, sprites, 1);
+	game.Init(&manager);
 
 	// init gameobjects
-	GameObject::sprites = sprites;
+	GameObject::sprites = manager.sprites;
 	pacsan.Init();
-	pacsan.x = BLOCKSIZE;
-	pacsan.y = BLOCKSIZE;
+	pacsan.Reset(game.startRow, game.startCol);
 	ghost.Init();
 	ghost.x = WIDTH - 2 * BLOCKSIZE;
 	ghost.y = BLOCKSIZE;
 
 	return true;
-}
-
-void cleanup()
-{
-	SDL_DestroyTexture(spritesheet);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-	IMG_Quit();
 }
 
 void loop(void *arg)
@@ -133,6 +59,10 @@ void loop(void *arg)
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
 			}
+			if (e.key.keysym.sym == SDLK_z) {
+				game.NextLevel();
+				pacsan.Reset(game.startRow, game.startCol);
+			}
 		}
 	}
 	if (quit) {
@@ -142,20 +72,21 @@ void loop(void *arg)
 		return;
 	}
 
-	// update
-	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-	pacsan.Update(keystate, &game);
-	ghost.Update(keystate, &game);
+	if (!game.paused) {
+		// update
+		const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+		pacsan.Update(keystate, &game);
+		ghost.Update(keystate, &game);
+	}
 
 	// render
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
-	SDL_RenderClear(renderer);
-	game.Draw(renderer, sprites);
-	pacsan.Draw(renderer);
-	ghost.Draw(renderer);
-	title.Draw(renderer);
-	scoreText.Draw(font, renderer);
-	SDL_RenderPresent(renderer);
+	SDL_SetRenderDrawColor(manager.renderer, 0, 0, 0, 0xff);
+	SDL_RenderClear(manager.renderer);
+	game.Draw();
+	pacsan.Draw(manager.renderer);
+	ghost.Draw(manager.renderer);
+	scoreText.Draw(manager.font, manager.renderer);
+	SDL_RenderPresent(manager.renderer);
 }
 
 int main()
@@ -170,7 +101,7 @@ int main()
 			}
 		#endif
 	}
-	cleanup();
+	manager.Quit();
 
 	return 0;
 }

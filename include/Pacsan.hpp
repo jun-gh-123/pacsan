@@ -9,6 +9,7 @@ class Pacsan: public GameObject {
 		int animateCount = 0;
 	public:
 		void Init();
+		void Reset(int row, int col);
 		void Update(const Uint8 *keystate, Game *game);
 };
 

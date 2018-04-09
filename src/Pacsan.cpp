@@ -5,6 +5,21 @@ void Pacsan::Init()
 	this->SetSprite(SpriteCode::PACSAN_OPEN);
 }
 
+void Pacsan::Reset(
+	int row, int col
+)
+{
+	this->x = col * BLOCKSIZE;
+	this->y = row * BLOCKSIZE;
+	this->direction = Direction::NONE;
+	this->nextDirection = Direction::NONE;
+	this->angle = 0.0f;
+	this->animateCount = 0;
+	this->moving = false;
+	this->spriteCode = SpriteCode::PACSAN_OPEN;
+	this->SetSprite(this->spriteCode);
+}
+
 void Pacsan::Update(
 	const Uint8 *keystate,
 	Game *game
@@ -57,13 +72,7 @@ void Pacsan::Update(
 		int col = this->x / BLOCKSIZE;
 		bool offscreen = false;
 
-		int tile = game->GetTile(row, col);
-		if (tile == TileCode::PELLET) {
-			game->score += 10;
-		} else if (tile == TileCode::SUPER_PELLET) {
-			game->score += 50;
-		}
-		game->SetTile(row, col, TileCode::EMPTY);
+		game->EatPellet(row, col);
 
 		if (row < 0) {
 			this->y = ROWS * BLOCKSIZE;
