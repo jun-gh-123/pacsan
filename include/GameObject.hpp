@@ -17,13 +17,12 @@ class GameObject {
 		Direction nextDirection = Direction::NONE;
 		int getTileInDirection(Direction dir, Game *game);
 	public:
-		static Sprite *sprites;
 		int x, y;
 		double angle = 0.0f;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
 		virtual void Init() = 0;
 		void SetSprite(int spriteCode);
-		void Draw(SDL_Renderer *renderer);
+		void Draw();
 };
 
 #endif

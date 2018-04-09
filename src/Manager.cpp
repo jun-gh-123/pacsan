@@ -75,3 +75,16 @@ void Manager::Quit()
 	SDL_Quit();
 	IMG_Quit();
 }
+
+void Manager::RenderClear(
+	Uint8 r, Uint8 g, Uint8 b
+)
+{
+	SDL_SetRenderDrawColor(this->renderer, r, g, b, 0xff);
+	SDL_RenderClear(this->renderer);
+}
+
+void Manager::RenderPresent()
+{
+	SDL_RenderPresent(this->renderer);
+}

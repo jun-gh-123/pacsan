@@ -18,7 +18,9 @@
 #include "Text.hpp"
 #include "VariableText.hpp"
 
-Manager manager;
+// globals
+Manager gManager;
+
 Game game;
 Pacsan pacsan;
 Ghost ghost;
@@ -27,17 +29,16 @@ bool quit = false;
 
 bool init()
 {
-	if (!manager.Init()) {
+	if (!gManager.Init()) {
 		return false;
 	}
-	scoreText.Init(manager.font, manager.renderer, &game.score);
+	scoreText.Init(gManager.font, gManager.renderer, &game.score);
 	scoreText.scale = 2.0f;
 
 	// init game
-	game.Init(&manager);
+	game.Init();
 
 	// init gameobjects
-	GameObject::sprites = manager.sprites;
 	pacsan.Init();
 	pacsan.Reset(game.startRow, game.startCol);
 	ghost.Init();
@@ -80,13 +81,12 @@ void loop(void *arg)
 	}
 
 	// render
-	SDL_SetRenderDrawColor(manager.renderer, 0, 0, 0, 0xff);
-	SDL_RenderClear(manager.renderer);
+	gManager.RenderClear(0, 0, 0);
 	game.Draw();
-	pacsan.Draw(manager.renderer);
-	ghost.Draw(manager.renderer);
-	scoreText.Draw(manager.font, manager.renderer);
-	SDL_RenderPresent(manager.renderer);
+	pacsan.Draw();
+	ghost.Draw();
+	scoreText.Draw(gManager.font, gManager.renderer);
+	gManager.RenderPresent();
 }
 
 int main()
@@ -101,7 +101,7 @@ int main()
 			}
 		#endif
 	}
-	manager.Quit();
+	gManager.Quit();
 
 	return 0;
 }

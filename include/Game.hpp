@@ -14,7 +14,6 @@
 
 class Game {
 	private:
-		Manager *manager;
 		SDL_Texture *blocksTexture = 0;
 		int tiles[ROWS * COLS];
 		int heatmap[ROWS * COLS];
@@ -29,7 +28,7 @@ class Game {
 		int startRow, startCol;
 		bool levelCleared = false;
 		~Game();
-		void Init(Manager *manager);
+		void Init();
 		void SetTexts(const char *header, const char *subtext);
 		void NextLevel();
 		void LoadLevel(int level);

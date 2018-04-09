@@ -1,6 +1,5 @@
 #include "GameObject.hpp"
-
-Sprite *GameObject::sprites = 0;
+#include "globals.hpp"
 
 int GameObject::getTileInDirection(
 	Direction dir,
@@ -35,15 +34,13 @@ void GameObject::SetSprite(
 )
 {
 	this->spriteCode = spriteCode;
-	this->sprite = &sprites[spriteCode];
+	this->sprite = &gManager.sprites[spriteCode];
 }
 
-void GameObject::Draw(
-	SDL_Renderer *renderer
-)
+void GameObject::Draw()
 {
 	this->sprite->Render(
-		renderer,
+		gManager.renderer,
 		this->x, this->y,
 		this->angle,
 		this->flip

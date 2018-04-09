@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Game.hpp"
 #include "levels.hpp"
+#include "globals.hpp"
 
 Game::~Game()
 {
@@ -9,11 +10,8 @@ Game::~Game()
 	}
 }
 
-void Game::Init(
-	Manager *manager
-)
+void Game::Init()
 {
-	this->manager = manager;
 	this->maxLevel = sizeof(levels) / sizeof(*levels);
 	this->level = 0;
 	this->LoadLevel(this->level);
@@ -25,8 +23,8 @@ void Game::SetTexts(
 	const char *subtextstr
 )
 {
-	TTF_Font *font = this->manager->font;
-	SDL_Renderer *renderer = this->manager->renderer;
+	TTF_Font *font = gManager.font;
+	SDL_Renderer *renderer = gManager.renderer;
 
 	this->header.Init(font, renderer, headerstr);
 	this->subtext.Init(font, renderer, subtextstr);
@@ -57,8 +55,8 @@ void Game::LoadLevel(
 	int level
 )
 {
-	SDL_Renderer *renderer = this->manager->renderer;
-	Sprite *sprites = this->manager->sprites;
+	SDL_Renderer *renderer = gManager.renderer;
+	Sprite *sprites = gManager.sprites;
 
 	if (!this->blocksTexture) {
 		this->blocksTexture = SDL_CreateTexture(
@@ -147,8 +145,8 @@ int Game::EatPellet(
 
 void Game::Draw()
 {
-	SDL_Renderer *renderer = this->manager->renderer;
-	Sprite *sprites = this->manager->sprites;
+	SDL_Renderer *renderer = gManager.renderer;
+	Sprite *sprites = gManager.sprites;
 
 	// draw blocks
 	SDL_RenderCopy(renderer, this->blocksTexture, NULL, NULL);

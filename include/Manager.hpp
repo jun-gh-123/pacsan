@@ -20,6 +20,8 @@ class Manager {
 		Sprite sprites[8];
 		bool Init();
 		void Quit();
+		void RenderClear(Uint8 r, Uint8 g, Uint8 b);
+		void RenderPresent();
 };
 
 #endif
