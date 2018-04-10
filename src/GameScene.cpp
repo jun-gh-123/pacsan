@@ -34,6 +34,9 @@ int GameScene::Update(
 			}
 		}
 		if (collided) {
+			if (this->game.lives <= 0) {
+				return SceneCode::GAMEOVER;
+			}
 			gManager.ShowTexts("DEAD", "Press <space> to continue.");
 			this->game.paused = true;
 		}

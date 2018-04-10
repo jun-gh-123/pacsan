@@ -12,6 +12,31 @@ void GameObject::Reset(
 	this->angle = 0.0f;
 }
 
+bool GameObject::isAtIntersection(
+	Game *game
+)
+{
+	int row = this->y / BLOCKSIZE;
+	int col = this->x / BLOCKSIZE;
+
+	if (this->direction == Direction::UP || this->direction == Direction::DOWN) {
+		if (game->GetTile(row, col - 1) == TileCode::EMPTY) {
+			return true;
+		}
+		if (game->GetTile(row, col + 1) == TileCode::EMPTY) {
+			return true;
+		}
+	}
+	if (this->direction == Direction::LEFT || this->direction == Direction::RIGHT) {
+		if (game->GetTile(row - 1, col) == TileCode::EMPTY) {
+			return true;
+		}
+		if (game->GetTile(row + 1, col) == TileCode::EMPTY) {
+			return true;
+		}
+	}
+	return false;
+}
 
 int GameObject::getTileInDirection(
 	Direction dir,

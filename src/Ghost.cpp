@@ -9,6 +9,14 @@ void Ghost::Init(
 	this->spd = 2;
 }
 
+void Ghost::Reset(
+	int row, int col
+)
+{
+	GameObject::Reset(row, col);
+	this->direction = Direction::UP;
+}
+
 void Ghost::Update(
 	const Uint8 *keystate,
 	Game *game
@@ -58,20 +66,24 @@ void Ghost::Update(
 		}
 
 		// get random next direction
-		bool found = false;
-		std::random_device rd;
-		std::mt19937 rng(rd());
-		std::uniform_int_distribution<int> uni(0, 4);
-		while (!found) {
-			Direction nextDirection = (Direction) uni(rng);
-
-			if (getTileInDirection(nextDirection, game) != TileCode::BLOCK) {
-				found = true;
-				this->nextDirection = nextDirection;
+		int currentTile = game->GetTile(row, col);
+		int tile = getTileInDirection(this->direction, game);
+		if ((currentTile != TileCode::DOOR && isAtIntersection(game)) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
+			bool found = false;
+			std::random_device rd;
+			std::mt19937 rng(rd());
+			std::uniform_int_distribution<int> uni(0, 4);
+			while (!found) {
+				Direction nextDirection = (Direction) uni(rng);
+				tile = getTileInDirection(nextDirection, game);
+				if (tile != TileCode::BLOCK && tile != TileCode::DOOR) {
+					found = true;
+					this->nextDirection = nextDirection;
+				}
 			}
-		}
 
-		this->direction = this->nextDirection;
-		this->nextDirection = this->direction;
+			this->direction = this->nextDirection;
+			this->nextDirection = this->direction;
+		}
 	}
 }

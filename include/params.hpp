@@ -12,6 +12,7 @@ namespace SceneCode {
 	enum {
 		OPENING = 0,
 		GAME,
+		GAMEOVER,
 		ENDING
 	};
 };
@@ -28,6 +29,7 @@ namespace SpriteCode {
 		GHOST_ESCAPE,
 		PELLET,
 		SUPER_PELLET,
+		DOOR,
 		_SIZE
 	};
 };
@@ -38,7 +40,8 @@ namespace TileCode {
 		BLOCK,
 		PELLET,
 		SUPER_PELLET,
-		PACSAN
+		PACSAN,
+		DOOR
 	};
 };
 

@@ -52,12 +52,15 @@ void Game::LoadLevel(
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	Sprite *block = &sprites[SpriteCode::BLOCK];
+	Sprite *door = &sprites[SpriteCode::DOOR];
 	this->numPellets = 0;
 	for (int r = 0; r < ROWS; r++) {
 		for (int c = 0; c < COLS; c++) {
 			int tilecode = levels[level][r * COLS + c];
 			if (tilecode == TileCode::BLOCK) {
 				block->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
+			} else if (tilecode == TileCode::DOOR) {
+				door->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			} else if (tilecode == TileCode::PELLET || tilecode == TileCode::SUPER_PELLET) {
 				this->numPellets++;
 			} else if (tilecode == TileCode::PACSAN) {

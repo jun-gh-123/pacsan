@@ -16,6 +16,7 @@ class GameObject {
 		Direction direction = Direction::NONE;
 		Direction nextDirection = Direction::NONE;
 		int getTileInDirection(Direction dir, Game *game);
+		bool isAtIntersection(Game *game);
 	public:
 		int x, y;
 		int row, col;
