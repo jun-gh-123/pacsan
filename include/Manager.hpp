@@ -11,8 +11,13 @@
 
 #include "params.hpp"
 #include "Sprite.hpp"
+#include "Text.hpp"
 
 class Manager {
+	private:
+		bool textsVisible = true;
+		Text header;
+		Text subtext;
 	public:
 		SDL_Window *window = 0;
 		SDL_Renderer *renderer = 0;
@@ -23,6 +28,8 @@ class Manager {
 		void Quit();
 		void RenderClear(Uint8 r, Uint8 g, Uint8 b);
 		void RenderPresent();
+		void HideTexts();
+		void ShowTexts(const char *header, const char *subtext);
 };
 
 #endif

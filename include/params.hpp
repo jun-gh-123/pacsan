@@ -8,6 +8,14 @@
 #define WIDTH BLOCKSIZE * COLS
 #define HEIGHT BLOCKSIZE * ROWS
 
+namespace SceneCode {
+	enum {
+		OPENING = 0,
+		GAME,
+		ENDING
+	};
+};
+
 namespace SpriteCode {
 	enum {
 		BLOCK = 0,

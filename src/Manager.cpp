@@ -93,5 +93,37 @@ void Manager::RenderClear(
 
 void Manager::RenderPresent()
 {
+	if (this->textsVisible) {
+		// draw texts
+		this->header.Draw();
+		this->subtext.Draw();
+	}
+
 	SDL_RenderPresent(this->renderer);
+}
+
+void Manager::HideTexts()
+{
+	this->textsVisible = false;
+}
+
+void Manager::ShowTexts(
+	const char *headerstr,
+	const char *subtextstr
+)
+{
+	this->textsVisible = true;
+	this->header.Set(headerstr);
+	this->subtext.Set(subtextstr, 200, 200, 200);
+
+	this->header.scale = 4.0f;
+	this->subtext.scale = 2.0f;
+
+	int totalHeight = this->header.GetHeight() + this->subtext.GetHeight();
+
+	this->header.x = WIDTH / 2 - this->header.GetWidth() / 2;
+	this->header.y = HEIGHT / 2 - totalHeight / 2;
+
+	this->subtext.x = WIDTH / 2 - this->subtext.GetWidth() / 2;
+	this->subtext.y = this->header.y + this->header.GetHeight();
 }

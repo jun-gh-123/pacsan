@@ -12,39 +12,41 @@
 // project libraries
 #include "params.hpp"
 #include "Manager.hpp"
-#include "Game.hpp"
-#include "Pacsan.hpp"
-#include "Ghost.hpp"
-#include "Text.hpp"
-#include "VariableText.hpp"
+#include "Scene.hpp"
+#include "OpeningScene.hpp"
+#include "GameScene.hpp"
 
 // globals
 Manager gManager;
 
-Game game;
-Pacsan pacsan;
-Ghost ghosts[4];
-VariableText<int> scoreText;
+int sceneCodeCurrent = SceneCode::OPENING;
+Scene *scene;
+OpeningScene opening;
+GameScene game;
 bool quit = false;
+
+void setScene(int sceneCode) {
+	switch (sceneCode) {
+		case SceneCode::OPENING:
+			scene = &opening;
+			break;
+		case SceneCode::GAME:
+			scene = &game;
+			break;
+		case SceneCode::ENDING:
+			// todo
+			break;
+	}
+	scene->Init();
+	sceneCodeCurrent = sceneCode;
+}
 
 bool init()
 {
 	if (!gManager.Init()) {
 		return false;
 	}
-	scoreText.Init(&game.score);
-	scoreText.scale = 2.0f;
-
-	// init game
-	game.Init();
-
-	// init gameobjects
-	pacsan.Init();
-	pacsan.Reset(game.startRow, game.startCol);
-	for (int i = 0; i < 4; i++) {
-		ghosts[i].Init(SpriteCode::GHOST_RED + i);
-		ghosts[i].Reset(ROWS / 2, COLS / 2);
-	}
+	setScene(SceneCode::OPENING);
 
 	return true;
 }
@@ -61,17 +63,6 @@ void loop(void *arg)
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
 			}
-			if (game.paused && e.key.keysym.sym == SDLK_z) {
-				if (game.levelCleared) {
-					game.NextLevel();
-				} else {
-					game.NewLife();
-				}
-				pacsan.Reset(game.startRow, game.startCol);
-				for (int i = 0; i < 4; i++) {
-					ghosts[i].Reset(ROWS / 2, COLS / 2);
-				}
-			}
 		}
 	}
 	if (quit) {
@@ -81,32 +72,15 @@ void loop(void *arg)
 		return;
 	}
 
-	if (!game.paused) {
-		// update
-		const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-		pacsan.Update(keystate, &game);
-
-		bool collided = false;
-		for (int i = 0; i < 4 && !collided; i++) {
-			ghosts[i].Update(keystate, &game);
-			if (pacsan.IsColliding(&ghosts[i])) {
-				collided = true;
-			}
-		}
-		if (collided) {
-			game.SetTexts("DEAD", "");
-			game.paused = true;
-		}
+	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+	int sceneCode = scene->Update(keystate);
+	if (sceneCode != sceneCodeCurrent) {
+		setScene(sceneCode);
 	}
 
 	// render
 	gManager.RenderClear(0, 0, 0);
-	game.Draw();
-	pacsan.Draw();
-	for (int i = 0; i < 4; i++) {
-		ghosts[i].Draw();
-	}
-	scoreText.Draw();
+	scene->Draw();
 	gManager.RenderPresent();
 }
 

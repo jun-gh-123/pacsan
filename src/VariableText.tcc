@@ -23,6 +23,7 @@ void VariableText<VarType>::Draw()
 	if (*this->var != this->prev) {
 		std::string str = std::to_string(*this->var);
 		this->CreateTexture(gManager.font, gManager.renderer, str.c_str());
+		this->prev = *this->var;
 	}
 	Text::Draw();
 }
