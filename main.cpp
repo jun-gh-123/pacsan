@@ -16,15 +16,16 @@
 #include "OpeningScene.hpp"
 #include "GameScene.hpp"
 #include "GameoverScene.hpp"
+#include "EndingScene.hpp"
 
 // globals
 Manager gManager;
-
 int sceneCodeCurrent = SceneCode::OPENING;
 Scene *scene;
 OpeningScene opening;
 GameScene game;
 GameoverScene gameover;
+EndingScene ending;
 bool quit = false;
 
 void setScene(int sceneCode) {
@@ -39,7 +40,7 @@ void setScene(int sceneCode) {
 			scene = &gameover;
 			break;
 		case SceneCode::ENDING:
-			// todo
+			scene = &ending;
 			break;
 	}
 	scene->Init();

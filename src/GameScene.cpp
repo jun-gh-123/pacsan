@@ -43,6 +43,9 @@ int GameScene::Update(
 	} else {
 		if (keystate[SDL_SCANCODE_SPACE]) {
 			if (this->game.levelCleared) {
+				if (this->game.level + 1 >= this->game.maxLevel) {
+					return SceneCode::ENDING;
+				}
 				this->game.NextLevel(&(this->blocksTexture));
 			} else {
 				this->game.NewLife();

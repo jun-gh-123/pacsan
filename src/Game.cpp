@@ -18,14 +18,10 @@ void Game::NextLevel(
 )
 {
 	this->level++;
-	if (this->level >= this->maxLevel) {
-		gManager.ShowTexts("THE END", "You beat the game.");
-	} else {
-		this->levelCleared = false;
-		this->paused = false;
-		this->LoadLevel(this->level, blocksTexture);
-		gManager.HideTexts();
-	}
+	this->levelCleared = false;
+	this->paused = false;
+	this->LoadLevel(this->level, blocksTexture);
+	gManager.HideTexts();
 }
 
 void Game::NewLife()

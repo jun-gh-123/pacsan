@@ -3,14 +3,14 @@
 
 void GameoverScene::Init()
 {
-	gManager.ShowTexts("GAMEOVER", "Press <space> to continue.");
+	gManager.ShowTexts("GAMEOVER", "Press <enter> to continue.");
 }
 
 int GameoverScene::Update(
 	const Uint8 *keystate
 )
 {
-	if (keystate[SDL_SCANCODE_SPACE]) {
+	if (keystate[SDL_SCANCODE_RETURN]) {
 		return SceneCode::OPENING;
 	}
 	return SceneCode::GAMEOVER;
