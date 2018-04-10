@@ -55,6 +55,7 @@ void GameObject::Draw()
 		gManager.renderer,
 		this->x, this->y,
 		this->angle,
+		this->scale,
 		this->flip
 	);
 }

@@ -18,6 +18,7 @@ class Sprite {
 			SDL_Renderer *renderer,
 			int x, int y,
 			double angle = 0.0f,
+			double scale = 1.0f,
 			SDL_RendererFlip flip = SDL_FLIP_NONE
 		);
 };

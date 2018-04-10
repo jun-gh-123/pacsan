@@ -20,6 +20,7 @@ class GameObject {
 		int x, y;
 		int row, col;
 		double angle = 0.0f;
+		double scale = 1.0f;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
 		void Reset(int row, int col);
 		void SetSprite(int spriteCode);

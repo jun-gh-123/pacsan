@@ -35,14 +35,15 @@ void Sprite::Render(
 	SDL_Renderer *renderer,
 	int x, int y,
 	double angle,
+	double scale,
 	SDL_RendererFlip flip
 )
 {
 	SDL_Rect dstrect = {
 		x,
 		y,
-		this->clip.w,
-		this->clip.h
+		(int)(this->clip.w * scale),
+		(int)(this->clip.h * scale)
 	};
 	SDL_SetTextureColorMod(spritesheet, this->r, this->g, this->b);
 	SDL_RenderCopyEx(renderer, Sprite::spritesheet, &this->clip, &dstrect, angle, NULL, flip);
