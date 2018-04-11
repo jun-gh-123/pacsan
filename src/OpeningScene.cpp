@@ -6,6 +6,8 @@ void OpeningScene::Init()
 	gManager.ShowTexts("PACSAN", "Press <space> to start game.");
 	this->animateCount = 0;
 	this->spriteCode = SpriteCode::PACSAN_OPEN;
+	this->highscoreText.Init(&gManager.highscore);
+	this->highscoreText.scale = 2.0f;
 }
 
 int OpeningScene::Update(
@@ -33,4 +35,5 @@ void OpeningScene::Draw()
 	gManager.sprites[this->spriteCode].Render(
 		gManager.renderer, centerX, y, 0.0f, 1.5f
 	);
+	this->highscoreText.Draw();
 }

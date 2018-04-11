@@ -2,11 +2,13 @@
 #define OPENINGSCENE_HPP
 
 #include "Scene.hpp"
+#include "VariableText.hpp"
 
 class OpeningScene : public Scene {
 	private:
 		int animateCount;
 		int spriteCode;
+		VariableText<int> highscoreText;
 	public:
 		void Init();
 		int Update(const Uint8 *keystate);

@@ -68,7 +68,8 @@ void Ghost::Update(
 		// get random next direction
 		int currentTile = game->GetTile(row, col);
 		int tile = getTileInDirection(this->direction, game);
-		if ((currentTile != TileCode::DOOR && isAtIntersection(game)) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
+		bool atIntersection = isAtIntersection(game);
+		if ((currentTile != TileCode::DOOR && atIntersection) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
 			bool found = false;
 			std::random_device rd;
 			std::mt19937 rng(rd());

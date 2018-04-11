@@ -24,6 +24,8 @@ class Manager {
 		SDL_Texture *spritesheet = 0;
 		TTF_Font *font = 0;
 		Sprite sprites[SpriteCode::_SIZE];
+		int highscore = 0;
+
 		bool Init();
 		void Quit();
 		void RenderClear(Uint8 r, Uint8 g, Uint8 b);

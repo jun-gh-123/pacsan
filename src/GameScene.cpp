@@ -17,12 +17,30 @@ void GameScene::Init()
 	// init vartexts
 	scoreText.Init(&this->game.score);
 	scoreText.scale = 2.0f;
+	livesText.Init(&this->game.lives);
+	livesText.scale = 2.0f;
 }
 
 int GameScene::Update(
 	const Uint8 *keystate
 )
 {
+	if (keystate[SDL_SCANCODE_S]) {
+		if (!skipdown) {
+			if (this->game.level + 1 >= this->game.maxLevel) {
+				this->game.level = -1;
+			}
+			this->game.NextLevel(&(this->blocksTexture));
+			this->pacsan.Reset(this->game.startRow, this->game.startCol);
+			for (int i = 0; i < 4; i++) {
+				ghosts[i].Reset(ROWS / 2, COLS / 2);
+			}
+		}
+		skipdown = true;
+	} else if (!keystate[SDL_SCANCODE_S]) {
+		skipdown = false;
+	}
+
 	if (!this->game.paused) {
 		pacsan.Update(keystate, &this->game);
 
@@ -34,7 +52,10 @@ int GameScene::Update(
 			}
 		}
 		if (collided) {
-			if (this->game.lives <= 0) {
+			if (this->game.lives <= 1) {
+				if (this->game.score > gManager.highscore) {
+					gManager.highscore = this->game.score;
+				}
 				return SceneCode::GAMEOVER;
 			}
 			gManager.ShowTexts("DEAD", "Press <space> to continue.");
@@ -44,6 +65,9 @@ int GameScene::Update(
 		if (keystate[SDL_SCANCODE_SPACE]) {
 			if (this->game.levelCleared) {
 				if (this->game.level + 1 >= this->game.maxLevel) {
+					if (this->game.score > gManager.highscore) {
+						gManager.highscore = this->game.score;
+					}
 					return SceneCode::ENDING;
 				}
 				this->game.NextLevel(&(this->blocksTexture));
@@ -87,4 +111,6 @@ void GameScene::Draw()
 		this->ghosts[i].Draw();
 	}
 	this->scoreText.Draw();
+	this->livesText.x = WIDTH - this->livesText.GetWidth();
+	this->livesText.Draw();
 }

@@ -20,18 +20,19 @@ bool GameObject::isAtIntersection(
 	int col = this->x / BLOCKSIZE;
 
 	if (this->direction == Direction::UP || this->direction == Direction::DOWN) {
-		if (game->GetTile(row, col - 1) == TileCode::EMPTY) {
+		if (game->GetTile(row, col - 1) != TileCode::BLOCK) {
 			return true;
 		}
-		if (game->GetTile(row, col + 1) == TileCode::EMPTY) {
+		if (game->GetTile(row, col + 1) != TileCode::BLOCK) {
 			return true;
 		}
 	}
 	if (this->direction == Direction::LEFT || this->direction == Direction::RIGHT) {
-		if (game->GetTile(row - 1, col) == TileCode::EMPTY) {
+		if (game->GetTile(row - 1, col) != TileCode::BLOCK) {
 			return true;
 		}
-		if (game->GetTile(row + 1, col) == TileCode::EMPTY) {
+		int tiledown = game->GetTile(row + 1, col);
+		if (tiledown != TileCode::BLOCK && tiledown != TileCode::DOOR) {
 			return true;
 		}
 	}
