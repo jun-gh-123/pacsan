@@ -18,6 +18,8 @@ class GameScene : public Scene {
 		VariableText<int> scoreText;
 		VariableText<int> livesText;
 		void resetGameObjects();
+		void onPowerUpStart();
+		void onPowerUpEnd();
 	public:
 		void Init();
 		int Update(const Uint8 *keystate);

@@ -18,6 +18,7 @@ class GameObject {
 		int getTileInDirection(Direction dir, Game *game);
 		bool isAtIntersection(Game *game);
 	public:
+		bool active = true;
 		int x, y;
 		int row, col;
 		double angle = 0.0f;

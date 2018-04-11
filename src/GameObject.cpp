@@ -5,6 +5,7 @@ void GameObject::Reset(
 	int row, int col
 )
 {
+	this->active = true;
 	this->x = col * BLOCKSIZE;
 	this->y = row * BLOCKSIZE;
 	this->direction = Direction::NONE;
@@ -77,6 +78,9 @@ void GameObject::SetSprite(
 
 void GameObject::Draw()
 {
+	if (!this->active) {
+		return;
+	}
 	this->sprite->Render(
 		gManager.renderer,
 		this->x, this->y,
@@ -90,5 +94,8 @@ bool GameObject::IsColliding(
 	GameObject *target
 )
 {
+	if (!target->active) {
+		return false;
+	}
 	return target->row == this->row && target->col == this->col;
 }

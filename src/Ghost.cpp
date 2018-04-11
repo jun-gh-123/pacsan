@@ -14,6 +14,10 @@ void Ghost::Update(
 	Game *game
 )
 {
+	if (!this->active) {
+		return;
+	}
+
 	switch (this->direction) {
 		case Direction::UP:
 			this->y -= this->spd;

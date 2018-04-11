@@ -1,3 +1,5 @@
+#include <functional>
+#include <iostream>
 #include "GameScene.hpp"
 
 void GameScene::resetGameObjects()
@@ -9,10 +11,27 @@ void GameScene::resetGameObjects()
 	ghosts[3].Reset(ROWS / 2, COLS / 2 + 1);
 }
 
+void GameScene::onPowerUpStart()
+{
+	for (int i = 0; i < 4; i++) {
+		ghosts[i].SetSprite(SpriteCode::GHOST_ESCAPE);
+	}
+}
+
+void GameScene::onPowerUpEnd()
+{
+	for (int i = 0; i < 4; i++) {
+		ghosts[i].SetSprite(SpriteCode::GHOST_RED + i);
+	}
+}
+
 void GameScene::Init()
 {
 	this->game.Init();
 	this->game.LoadLevel(this->game.level, &this->blocksTexture);
+	this->game.onPowerUpStart = std::bind(&GameScene::onPowerUpStart, this);
+	this->game.onPowerUpEnd = std::bind(&GameScene::onPowerUpEnd, this);
+
 	gManager.HideTexts();
 
 	// init game objects
@@ -33,6 +52,8 @@ int GameScene::Update(
 	const Uint8 *keystate
 )
 {
+	this->game.Update();
+
 	if (keystate[SDL_SCANCODE_S]) {
 		if (!skipdown) {
 			if (this->game.level + 1 >= this->game.maxLevel) {
@@ -49,22 +70,27 @@ int GameScene::Update(
 	if (!this->game.paused) {
 		pacsan.Update(keystate, &this->game);
 
-		bool collided = false;
-		for (int i = 0; i < 4 && !collided; i++) {
+		int collided = -1;
+		for (int i = 0; i < 4 && collided == -1; i++) {
 			ghosts[i].Update(keystate, &this->game);
 			if (pacsan.IsColliding(&ghosts[i])) {
-				collided = true;
+				collided = i;
 			}
 		}
-		if (collided) {
-			if (this->game.lives <= 1) {
-				if (this->game.score > gManager.highscore) {
-					gManager.highscore = this->game.score;
+		if (collided > -1) {
+			if (this->game.powerUpTime > 0) {
+				ghosts[collided].active = false;
+				this->game.score += 100;
+			} else {
+				if (this->game.lives <= 1) {
+					if (this->game.score > gManager.highscore) {
+						gManager.highscore = this->game.score;
+					}
+					return SceneCode::GAMEOVER;
 				}
-				return SceneCode::GAMEOVER;
+				gManager.ShowTexts("DEAD", "Press <space> to continue.");
+				this->game.paused = true;
 			}
-			gManager.ShowTexts("DEAD", "Press <space> to continue.");
-			this->game.paused = true;
 		}
 	} else {
 		if (keystate[SDL_SCANCODE_SPACE]) {
