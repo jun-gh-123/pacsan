@@ -9,14 +9,6 @@ void Ghost::Init(
 	this->spd = 2;
 }
 
-void Ghost::Reset(
-	int row, int col
-)
-{
-	GameObject::Reset(row, col);
-	this->direction = Direction::UP;
-}
-
 void Ghost::Update(
 	const Uint8 *keystate,
 	Game *game
@@ -77,9 +69,11 @@ void Ghost::Update(
 			while (!found) {
 				Direction nextDirection = (Direction) uni(rng);
 				tile = getTileInDirection(nextDirection, game);
-				if (tile != TileCode::BLOCK && tile != TileCode::DOOR) {
-					found = true;
-					this->nextDirection = nextDirection;
+				if (tile != TileCode::BLOCK) {
+					if (tile != TileCode::DOOR || (nextDirection == Direction::UP && tile == TileCode::DOOR)) {
+						found = true;
+						this->nextDirection = nextDirection;
+					}
 				}
 			}
 

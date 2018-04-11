@@ -17,6 +17,7 @@ class GameScene : public Scene {
 		Ghost ghosts[4];
 		VariableText<int> scoreText;
 		VariableText<int> livesText;
+		void resetGameObjects();
 	public:
 		void Init();
 		int Update(const Uint8 *keystate);

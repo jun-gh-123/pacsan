@@ -1,5 +1,14 @@
 #include "GameScene.hpp"
 
+void GameScene::resetGameObjects()
+{
+	pacsan.Reset(this->game.startRow, this->game.startCol);
+	ghosts[0].Reset(ROWS / 2 - 2, COLS / 2);
+	ghosts[1].Reset(ROWS / 2, COLS / 2);
+	ghosts[2].Reset(ROWS / 2, COLS / 2 - 1);
+	ghosts[3].Reset(ROWS / 2, COLS / 2 + 1);
+}
+
 void GameScene::Init()
 {
 	this->game.Init();
@@ -8,11 +17,10 @@ void GameScene::Init()
 
 	// init game objects
 	pacsan.Init();
-	pacsan.Reset(this->game.startRow, this->game.startCol);
 	for (int i = 0; i < 4; i++) {
 		ghosts[i].Init(SpriteCode::GHOST_RED + i);
-		ghosts[i].Reset(ROWS / 2, COLS / 2);
 	}
+	resetGameObjects();
 
 	// init vartexts
 	scoreText.Init(&this->game.score);
@@ -31,10 +39,7 @@ int GameScene::Update(
 				this->game.level = -1;
 			}
 			this->game.NextLevel(&(this->blocksTexture));
-			this->pacsan.Reset(this->game.startRow, this->game.startCol);
-			for (int i = 0; i < 4; i++) {
-				ghosts[i].Reset(ROWS / 2, COLS / 2);
-			}
+			resetGameObjects();
 		}
 		skipdown = true;
 	} else if (!keystate[SDL_SCANCODE_S]) {
@@ -74,10 +79,7 @@ int GameScene::Update(
 			} else {
 				this->game.NewLife();
 			}
-			this->pacsan.Reset(this->game.startRow, this->game.startCol);
-			for (int i = 0; i < 4; i++) {
-				ghosts[i].Reset(ROWS / 2, COLS / 2);
-			}
+			resetGameObjects();
 		}
 	}
 
