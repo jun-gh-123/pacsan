@@ -1,6 +1,7 @@
 #ifndef MANAGER_HPP
 #define MANAGER_HPP
 
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #ifdef __EMSCRIPTEN__
@@ -13,11 +14,15 @@
 #include "Sprite.hpp"
 #include "Text.hpp"
 
+using namespace std;
+
 class Manager {
 	private:
+		vector<vector<int>> levels;
 		bool textsVisible = true;
 		Text header;
 		Text subtext;
+		bool loadLevels(const char *filepath);
 	public:
 		SDL_Window *window = 0;
 		SDL_Renderer *renderer = 0;
@@ -32,6 +37,8 @@ class Manager {
 		void RenderPresent();
 		void HideTexts();
 		void ShowTexts(const char *header, const char *subtext);
+		int NumLevels();
+		vector<int>* GetLevel(int level);
 };
 
 #endif

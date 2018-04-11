@@ -1,11 +1,11 @@
 #include <iostream>
+#include <vector>
 #include "Game.hpp"
-#include "levels.hpp"
 #include "globals.hpp"
 
 void Game::Init()
 {
-	this->maxLevel = sizeof(levels) / sizeof(*levels);
+	this->maxLevel = gManager.NumLevels();
 	this->level = 0;
 	this->score = 0;
 	this->lives = 3;
@@ -27,8 +27,8 @@ void Game::NextLevel(
 void Game::NewLife()
 {
 	this->paused = false;
-	gManager.HideTexts();
 	this->lives--;
+	gManager.HideTexts();
 }
 
 void Game::LoadLevel(
@@ -49,10 +49,11 @@ void Game::LoadLevel(
 	SDL_RenderClear(renderer);
 	Sprite *block = &sprites[SpriteCode::BLOCK];
 	Sprite *door = &sprites[SpriteCode::DOOR];
+	std::vector<int>* leveltiles = gManager.GetLevel(this->level);
 	this->numPellets = 0;
 	for (int r = 0; r < ROWS; r++) {
 		for (int c = 0; c < COLS; c++) {
-			int tilecode = levels[level][r * COLS + c];
+			int tilecode = (*leveltiles)[r * COLS + c];
 			if (tilecode == TileCode::BLOCK) {
 				block->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			} else if (tilecode == TileCode::DOOR) {

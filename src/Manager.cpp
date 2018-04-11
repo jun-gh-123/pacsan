@@ -1,5 +1,39 @@
 #include <iostream>
+#include <fstream>
+#include <utility>
 #include "Manager.hpp"
+
+using namespace std;
+
+bool Manager::loadLevels(
+	const char *filepath
+)
+{
+	ifstream levelsFile(filepath);
+	if (levelsFile.is_open()) {
+		char ch;
+		int i = 0;
+		int count = 0;
+		this->levels.push_back(vector<int>());
+		while (levelsFile.get(ch)) {
+			if (ch == '\n') {
+				if (count == ROWS * COLS && levelsFile.peek() != EOF) {
+					i++;
+					this->levels.push_back(vector<int>());
+					count = 0;
+				}
+			} else if (ch != ' ') {
+				int n = ch - '0';
+				this->levels[i].push_back(n);
+				count++;
+			}
+		}
+	} else {
+		return false;
+	}
+	levelsFile.close();
+	return true;
+}
 
 bool Manager::Init()
 {
@@ -30,6 +64,11 @@ bool Manager::Init()
 	);
 	if (!renderer) {
 		printf("Failed to create SDL renderer: %s\n", SDL_GetError());
+		return false;
+	}
+
+	// load levels
+	if (!loadLevels("assets/levels.txt")) {
 		return false;
 	}
 
@@ -126,4 +165,16 @@ void Manager::ShowTexts(
 
 	this->subtext.x = WIDTH / 2 - this->subtext.GetWidth() / 2;
 	this->subtext.y = this->header.y + this->header.GetHeight();
+}
+
+int Manager::NumLevels()
+{
+	return this->levels.size();
+}
+
+vector<int>* Manager::GetLevel(
+	int level
+)
+{
+	return &(this->levels[level]);
 }
