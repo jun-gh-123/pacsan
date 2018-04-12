@@ -21,7 +21,9 @@ void GameScene::onPowerUpStart()
 void GameScene::onPowerUpEnd()
 {
 	for (int i = 0; i < 4; i++) {
-		ghosts[i].SetSprite(SpriteCode::GHOST_RED + i);
+		if (ghosts[i].active) {
+			ghosts[i].SetSprite(SpriteCode::GHOST_RED + i);
+		}
 	}
 }
 
@@ -79,7 +81,7 @@ int GameScene::Update(
 		}
 		if (collided > -1) {
 			if (this->game.powerUpTime > 0) {
-				ghosts[collided].active = false;
+				ghosts[collided].OnEaten();
 				this->game.score += 100;
 			} else {
 				if (this->game.lives <= 1) {

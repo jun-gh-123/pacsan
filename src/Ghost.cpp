@@ -6,6 +6,16 @@ void Ghost::Init(
 )
 {
 	this->SetSprite(spriteCode);
+	this->defaultSpriteCode = spriteCode;
+	this->spd = 2;
+}
+
+void Ghost::Reset(
+	int row, int col
+)
+{
+	GameObject::Reset(row, col);
+	this->OnReturnBase();
 }
 
 void Ghost::Update(
@@ -13,10 +23,6 @@ void Ghost::Update(
 	Game *game
 )
 {
-	if (!this->active) {
-		return;
-	}
-
 	switch (this->direction) {
 		case Direction::UP:
 			this->y -= this->spd;
@@ -42,6 +48,16 @@ void Ghost::Update(
 			return;
 		}
 
+		if (!this->active) {
+			if (row == ROWS / 2 && col == COLS / 2) {
+				OnReturnBase();
+			} else {
+				this->direction = game->GetDirectionToGhostBase(row, col);
+				this->nextDirection = this->direction;
+				return;
+			}
+		}
+
 		// get random next direction
 		int currentTile = game->GetTile(row, col);
 		int tile = getTileInDirection(this->direction, game);
@@ -65,4 +81,18 @@ void Ghost::Update(
 			this->nextDirection = this->direction;
 		}
 	}
+}
+
+void Ghost::OnEaten()
+{
+	this->active = false;
+	this->SetSprite(SpriteCode::GHOST_DEAD);
+	this->spd = 1;
+}
+
+void Ghost::OnReturnBase()
+{
+	this->active = true;
+	this->SetSprite(this->defaultSpriteCode);
+	this->spd = 2;
 }

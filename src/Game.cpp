@@ -70,6 +70,7 @@ void Game::LoadLevel(
 	}
 	SDL_SetRenderTarget(renderer, NULL);
 	UpdatePathmapPacsan(this->startRow, this->startCol);
+	updatePathmap(this->pathmapGhostBase, ROWS / 2, COLS / 2);
 }
 
 int Game::GetTile(
@@ -258,4 +259,11 @@ Direction Game::GetDirectionToPacsan(
 )
 {
 	return getPathDirection(this->pathmapPacsan, row, col, chase);
+}
+
+Direction Game::GetDirectionToGhostBase(
+	int row, int col
+)
+{
+	return getPathDirection(this->pathmapGhostBase, row, col);
 }

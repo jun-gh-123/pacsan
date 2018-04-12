@@ -112,6 +112,7 @@ Direction GameObject::getRandomDirection(
 			}
 		}
 	}
+	return Direction::NONE;
 }
 
 void GameObject::SetSprite(
@@ -124,9 +125,6 @@ void GameObject::SetSprite(
 
 void GameObject::Draw()
 {
-	if (!this->active) {
-		return;
-	}
 	this->sprite->Render(
 		gManager.renderer,
 		this->x, this->y,

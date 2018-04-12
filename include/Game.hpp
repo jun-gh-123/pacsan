@@ -43,6 +43,7 @@ class Game {
 		int EatPellet(int row, int col);
 		void Update();
 		Direction GetDirectionToPacsan(int row, int col, bool chase = true);
+		Direction GetDirectionToGhostBase(int row, int col);
 };
 
 #endif
