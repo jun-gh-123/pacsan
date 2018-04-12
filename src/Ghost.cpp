@@ -6,7 +6,6 @@ void Ghost::Init(
 )
 {
 	this->SetSprite(spriteCode);
-	this->spd = 2;
 }
 
 void Ghost::Update(
@@ -36,28 +35,10 @@ void Ghost::Update(
 	}
 
 	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
-		int row = this->row = this->y / BLOCKSIZE;
-		int col = this->col = this->x / BLOCKSIZE;
-		bool offscreen = false;
+		int row = this->y / BLOCKSIZE;
+		int col = this->x / BLOCKSIZE;
 
-		if (row < 0) {
-			this->y = ROWS * BLOCKSIZE;
-			offscreen = true;
-		}
-		if (row >= ROWS) {
-			this->y = -BLOCKSIZE;
-			offscreen = true;
-		}
-		if (col < 0) {
-			this->x = COLS * BLOCKSIZE;
-			offscreen = true;
-		}
-		if (col >= COLS) {
-			this->x = -BLOCKSIZE;
-			offscreen = true;
-		}
-
-		if (offscreen) {
+		if (offscreenCheck(row, col)) {
 			return;
 		}
 
@@ -66,22 +47,21 @@ void Ghost::Update(
 		int tile = getTileInDirection(this->direction, game);
 		bool atIntersection = isAtIntersection(game);
 		if ((currentTile != TileCode::DOOR && atIntersection) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
-			bool found = false;
 			std::random_device rd;
 			std::mt19937 rng(rd());
-			std::uniform_int_distribution<int> uni(0, 4);
-			while (!found) {
-				Direction nextDirection = (Direction) uni(rng);
-				tile = getTileInDirection(nextDirection, game);
-				if (tile != TileCode::BLOCK) {
-					if (tile != TileCode::DOOR || (nextDirection == Direction::UP && tile == TileCode::DOOR)) {
-						found = true;
-						this->nextDirection = nextDirection;
-					}
+			std::uniform_int_distribution<int> uni(0, 5);
+			Direction dir;
+
+			if (uni(rng) == 0) {
+				dir = getRandomDirection(row, col, game);
+			} else {
+				if (game->powerUpTime <= 0) {
+					dir = game->GetDirectionToPacsan(row, col);
+				} else {
+					dir = game->GetDirectionToPacsan(row, col, false);
 				}
 			}
-
-			this->direction = this->nextDirection;
+			this->direction = dir;
 			this->nextDirection = this->direction;
 		}
 	}

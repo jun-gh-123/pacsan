@@ -2,15 +2,24 @@
 #define GAME_HPP
 
 #include <functional>
-#include <vector>
 #include <SDL2/SDL.h>
 #include "params.hpp"
 
 using namespace std;
 
+typedef struct {
+	int row;
+	int col;
+	int score;
+} PathmapItem;
+
 class Game {
 	private:
-		int heatmap[ROWS * COLS];
+		int pathmapGhostBase[ROWS * COLS];
+		int pathmapPacsan[ROWS * COLS];
+		Direction getPathDirection(int *pathmap, int r, int c, bool chase = true);
+		void updatePathmap(int *pathmap, int r, int c);
+		void printPathmap(int *pathmap);
 	public:
 		int tiles[ROWS * COLS];
 		bool paused = false;
@@ -28,10 +37,12 @@ class Game {
 		void NextLevel(SDL_Texture **blocksTexture);
 		void NewLife();
 		void LoadLevel(int level, SDL_Texture **blocksTexture);
+		void UpdatePathmapPacsan(int row, int col);
 		int GetTile(int row, int col);
 		void SetTile(int row, int col, int val);
 		int EatPellet(int row, int col);
 		void Update();
+		Direction GetDirectionToPacsan(int row, int col, bool chase = true);
 };
 
 #endif

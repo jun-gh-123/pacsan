@@ -8,6 +8,14 @@
 #define WIDTH BLOCKSIZE * COLS
 #define HEIGHT BLOCKSIZE * ROWS
 
+enum class Direction {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	NONE
+};
+
 namespace SceneCode {
 	enum {
 		OPENING = 0,

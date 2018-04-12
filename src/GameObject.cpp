@@ -1,3 +1,4 @@
+#include <random>
 #include "GameObject.hpp"
 #include "globals.hpp"
 
@@ -68,6 +69,51 @@ int GameObject::getTileInDirection(
 	return game->GetTile(row, col);
 }
 
+bool GameObject::offscreenCheck(
+	int row, int col
+)
+{
+	bool offscreen = false;
+	if (row < 0) {
+		this->y = ROWS * BLOCKSIZE;
+		offscreen = true;
+	}
+	if (row >= ROWS) {
+		this->y = -BLOCKSIZE;
+		offscreen = true;
+	}
+	if (col < 0) {
+		this->x = COLS * BLOCKSIZE;
+		offscreen = true;
+	}
+	if (col >= COLS) {
+		this->x = -BLOCKSIZE;
+		offscreen = true;
+	}
+	return offscreen;
+}
+
+Direction GameObject::getRandomDirection(
+	int row, int col,
+	Game *game
+)
+{
+	bool found = false;
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> uni(0, 4);
+	while (!found) {
+		Direction nextDirection = (Direction) uni(rng);
+		int tile = getTileInDirection(nextDirection, game);
+		if (tile != TileCode::BLOCK) {
+			if (tile != TileCode::DOOR || (nextDirection == Direction::UP && tile == TileCode::DOOR)) {
+				found = true;
+				return nextDirection;
+			}
+		}
+	}
+}
+
 void GameObject::SetSprite(
 	int spriteCode
 )
@@ -97,5 +143,11 @@ bool GameObject::IsColliding(
 	if (!target->active) {
 		return false;
 	}
-	return target->row == this->row && target->col == this->col;
+	if (this->x + BLOCKSIZE / 2 < target->x || this->x > target->x + BLOCKSIZE / 2) {
+		return false;
+	}
+	if (this->y + BLOCKSIZE / 2 < target->y || this->y > target->y + BLOCKSIZE / 2) {
+		return false;
+	}
+	return true;
 }

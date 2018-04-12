@@ -7,9 +7,6 @@
 
 class GameObject {
 	protected:
-		enum class Direction {
-			UP, DOWN, LEFT, RIGHT, NONE
-		};
 		Sprite *sprite;
 		int spriteCode;
 		int spd = 4;
@@ -17,10 +14,11 @@ class GameObject {
 		Direction nextDirection = Direction::NONE;
 		int getTileInDirection(Direction dir, Game *game);
 		bool isAtIntersection(Game *game);
+		bool offscreenCheck(int row, int col);
+		Direction getRandomDirection(int row, int col, Game *game);
 	public:
 		bool active = true;
 		int x, y;
-		int row, col;
 		double angle = 0.0f;
 		double scale = 1.0f;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;

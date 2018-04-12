@@ -37,3 +37,6 @@ build-web: main.cpp
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/web
 	em++ -O2 -std=c++11 main.cpp $(SRC) $(EM_SDL_FLAGS) --embed-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
+
+gdb: build-desktop
+	cd $(BUILD_DIR)/desktop; gdb $(NAME)

@@ -63,30 +63,15 @@ void Pacsan::Update(
 	}
 
 	if (this->x % BLOCKSIZE == 0 && this->y % BLOCKSIZE == 0) {
-		int row = this->row = this->y / BLOCKSIZE;
-		int col = this->col = this->x / BLOCKSIZE;
-		bool offscreen = false;
+		int row = this->y / BLOCKSIZE;
+		int col = this->x / BLOCKSIZE;
 
-		game->EatPellet(row, col);
-
-		if (row < 0) {
-			this->y = ROWS * BLOCKSIZE;
-			offscreen = true;
-		}
-		if (row >= ROWS) {
-			this->y = -BLOCKSIZE;
-			offscreen = true;
-		}
-		if (col < 0) {
-			this->x = COLS * BLOCKSIZE;
-			offscreen = true;
-		}
-		if (col >= COLS) {
-			this->x = -BLOCKSIZE;
-			offscreen = true;
+		if (this->moving) {
+			game->EatPellet(row, col);
+			game->UpdatePathmapPacsan(row, col);
 		}
 
-		if (offscreen) {
+		if (offscreenCheck(row, col)) {
 			return;
 		}
 

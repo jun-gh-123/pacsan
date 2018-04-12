@@ -1,5 +1,6 @@
+#include <algorithm>
 #include <iostream>
-#include <vector>
+#include <queue>
 #include "Game.hpp"
 #include "globals.hpp"
 
@@ -68,6 +69,7 @@ void Game::LoadLevel(
 		}
 	}
 	SDL_SetRenderTarget(renderer, NULL);
+	UpdatePathmapPacsan(this->startRow, this->startCol);
 }
 
 int Game::GetTile(
@@ -115,7 +117,7 @@ int Game::EatPellet(
 	} else if (tile == TileCode::SUPER_PELLET) {
 		this->score += 50;
 		this->numPellets--;
-		this->powerUpTime = 1000;
+		this->powerUpTime = 500;
 		this->onPowerUpStart();
 	}
 	this->tiles[row * COLS + col] = TileCode::EMPTY;
@@ -138,4 +140,122 @@ void Game::Update()
 			this->powerUpTime = 0;
 		}
 	}
+}
+
+void Game::printPathmap(
+	int *pathmap
+)
+{
+	for (int r = 0; r < ROWS; r++) {
+		for (int c = 0; c < COLS; c++) {
+			int n = pathmap[r * COLS + c];
+			if (n == -1 || n > 9) {
+				printf("%i ", n);
+			} else {
+				printf(" %i ", n);
+			}
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+void Game::updatePathmap(
+	int *pathmap,
+	int r, int c
+)
+{
+	std::fill_n(pathmap, ROWS * COLS, -1);
+	std::queue<PathmapItem> queue;
+	queue.push((PathmapItem){ r, c, 0 });
+
+	while (queue.size() > 0) {
+		PathmapItem pi = queue.front();
+		queue.pop();
+		pathmap[pi.row * COLS + pi.col] = pi.score;
+
+		for (int i = -1; i <= 1; i += 2) {
+			int row = pi.row;
+			int col = pi.col;
+			int row2 = pi.row + i;
+			int col2 = pi.col + i;
+
+			if (row2 < 0) {
+				row2 = ROWS + row2;
+			}
+			if (row2 >= ROWS) {
+				row2 = row2 - ROWS;
+			}
+			if (col2 < 0) {
+				col2 = COLS + col2;
+			}
+			if (col2 >= COLS) {
+				col2 = col2 - COLS;
+			}
+
+			if (this->tiles[row * COLS + col2] != TileCode::BLOCK) {
+				if (pathmap[row * COLS + col2] == -1) {
+						queue.push((PathmapItem){ row, col2, pi.score + 1 });
+				}
+			}
+			if (this->tiles[row2 * COLS + col] != TileCode::BLOCK) {
+				if (pathmap[row2 * COLS + col] == -1) {
+					queue.push((PathmapItem){ row2, col, pi.score + 1 });
+				}
+			}
+		}
+	}
+}
+
+void Game::UpdatePathmapPacsan(
+	int pr, int pc
+)
+{
+	std::fill_n(pathmapPacsan, ROWS * COLS, -1);
+	updatePathmap(pathmapPacsan, pr, pc);
+	// printPathmap(pathmapPacsan);
+}
+
+Direction Game::getPathDirection(
+	int *pathmap,
+	int row, int col,
+	bool chase
+)
+{
+	int up = row - 1 < 0 ? ROWS - 1 : row - 1;
+	int down = row + 1 >= ROWS ? 0 : row + 1;
+	int left = col - 1 < 0 ? COLS - 1 : col - 1;
+	int right = col + 1 >= COLS ? 0 : col + 1;
+	Direction dir = Direction::NONE;
+	int score = (chase ? 999 : -999), n;
+
+	n = pathmap[up * COLS + col];
+	if (n > -1 && (chase ? n < score : n > score)) {
+		score = n;
+		dir = Direction::UP;
+	}
+	n = pathmap[down * COLS + col];
+	if (n > -1 && (chase ? n < score : n > score)) {
+		score = n;
+		dir = Direction::DOWN;
+	}
+	n = pathmap[row * COLS + left];
+	if (n > -1 && (chase ? n < score : n > score)) {
+		score = n;
+		dir = Direction::LEFT;
+	}
+	n = pathmap[row * COLS + right];
+	if (n > -1 && (chase ? n < score : n > score)) {
+		score = n;
+		dir = Direction::RIGHT;
+	}
+	return dir;
+}
+
+Direction Game::GetDirectionToPacsan(
+	int row, int col,
+	bool chase
+)
+{
+	return getPathDirection(this->pathmapPacsan, row, col, chase);
 }
