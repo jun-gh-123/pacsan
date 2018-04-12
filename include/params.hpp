@@ -34,6 +34,7 @@ namespace SpriteCode {
 		GHOST_PINK,
 		GHOST_CYAN,
 		GHOST_ORANGE,
+		GHOST_WHITE,
 		GHOST_ESCAPE,
 		GHOST_DEAD,
 		PELLET,

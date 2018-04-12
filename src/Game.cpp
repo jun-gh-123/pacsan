@@ -121,7 +121,7 @@ int Game::EatPellet(
 	} else if (tile == TileCode::SUPER_PELLET) {
 		this->score += 50;
 		this->numPellets--;
-		this->powerUpTime = 500;
+		this->powerUpTime = 600;
 		this->onPowerUpStart();
 	}
 	this->tiles[row * COLS + col] = TileCode::EMPTY;

@@ -24,6 +24,20 @@ void Ghost::Update(
 	Game *game
 )
 {
+	// blink ghost if powerup is about to expire
+	if (this->mode == GhostMode::ESCAPE) {
+		if (game->powerUpTime < 180) {
+			if (++this->blinkClock > 10) {
+				if (this->spriteCode == SpriteCode::GHOST_ESCAPE) {
+					this->SetSprite(SpriteCode::GHOST_WHITE);
+				} else {
+					this->SetSprite(SpriteCode::GHOST_ESCAPE);
+				}
+				this->blinkClock = 0;
+			}
+		}
+	}
+
 	switch (this->direction) {
 		case Direction::UP:
 			this->y -= this->spd;
@@ -94,6 +108,7 @@ void Ghost::SetMode(
 			this->SetSprite(this->defaultSpriteCode);
 			break;
 		case GhostMode::ESCAPE:
+			this->blinkClock = 0;
 			this->SetSprite(SpriteCode::GHOST_ESCAPE);
 			break;
 		case GhostMode::DEAD:

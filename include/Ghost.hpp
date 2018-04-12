@@ -6,6 +6,7 @@
 class Ghost : public GameObject {
 	private:
 		int defaultSpriteCode = 0;
+		int blinkClock = 0;
 	public:
 		int mode = GhostMode::NORMAL;
 		void Init(int spriteCode);

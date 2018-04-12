@@ -97,7 +97,7 @@ bool Manager::Init()
 	int x = 0;
 	for (int i = 0; i < SpriteCode::_SIZE; i++) {
 		sprites[i].Init(x * BLOCKSIZE, 0 , BLOCKSIZE, BLOCKSIZE);
-		if (i < SpriteCode::GHOST_RED || i >= SpriteCode::GHOST_ORANGE) {
+		if (i < SpriteCode::GHOST_RED || i >= SpriteCode::GHOST_WHITE) {
 			x++;
 		}
 	}
