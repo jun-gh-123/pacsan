@@ -12,6 +12,7 @@ void Game::Init()
 	this->lives = 3;
 	this->levelCleared = false;
 	this->paused = false;
+	this->powerUpTime = 0;
 }
 
 void Game::NextLevel(
@@ -22,6 +23,7 @@ void Game::NextLevel(
 	this->levelCleared = false;
 	this->paused = false;
 	this->LoadLevel(this->level, blocksTexture);
+	this->powerUpTime = 0;
 	gManager.HideTexts();
 }
 
@@ -30,6 +32,7 @@ void Game::NewLife()
 	this->paused = false;
 	this->lives--;
 	gManager.HideTexts();
+	UpdatePathmapPacsan(this->startRow, this->startCol);
 }
 
 void Game::LoadLevel(
@@ -128,7 +131,6 @@ int Game::EatPellet(
 		this->levelCleared = true;
 		this->paused = true;
 	}
-
 	return tile;
 }
 

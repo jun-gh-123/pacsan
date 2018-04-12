@@ -8,6 +8,7 @@ void Ghost::Init(
 	this->SetSprite(spriteCode);
 	this->defaultSpriteCode = spriteCode;
 	this->spd = 2;
+	this->mode = GhostMode::NORMAL;
 }
 
 void Ghost::Reset(
@@ -15,7 +16,7 @@ void Ghost::Reset(
 )
 {
 	GameObject::Reset(row, col);
-	this->OnReturnBase();
+	this->SetMode(GhostMode::NORMAL);
 }
 
 void Ghost::Update(
@@ -48,9 +49,9 @@ void Ghost::Update(
 			return;
 		}
 
-		if (!this->active) {
+		if (this->mode == GhostMode::DEAD) {
 			if (row == ROWS / 2 && col == COLS / 2) {
-				OnReturnBase();
+				this->SetMode(GhostMode::NORMAL);
 			} else {
 				this->direction = game->GetDirectionToGhostBase(row, col);
 				this->nextDirection = this->direction;
@@ -71,9 +72,9 @@ void Ghost::Update(
 			if (uni(rng) == 0) {
 				dir = getRandomDirection(row, col, game);
 			} else {
-				if (game->powerUpTime <= 0) {
+				if (this->mode == GhostMode::NORMAL) {
 					dir = game->GetDirectionToPacsan(row, col);
-				} else {
+				} else if (this->mode == GhostMode::ESCAPE) {
 					dir = game->GetDirectionToPacsan(row, col, false);
 				}
 			}
@@ -83,16 +84,22 @@ void Ghost::Update(
 	}
 }
 
-void Ghost::OnEaten()
+void Ghost::SetMode(
+	int mode
+)
 {
-	this->active = false;
-	this->SetSprite(SpriteCode::GHOST_DEAD);
-	this->spd = 1;
-}
-
-void Ghost::OnReturnBase()
-{
-	this->active = true;
-	this->SetSprite(this->defaultSpriteCode);
-	this->spd = 2;
+	switch (mode) {
+		case GhostMode::NORMAL:
+			this->active = true;
+			this->SetSprite(this->defaultSpriteCode);
+			break;
+		case GhostMode::ESCAPE:
+			this->SetSprite(SpriteCode::GHOST_ESCAPE);
+			break;
+		case GhostMode::DEAD:
+			this->active = false;
+			this->SetSprite(SpriteCode::GHOST_DEAD);
+			break;
+	}
+	this->mode = mode;
 }

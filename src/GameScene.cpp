@@ -14,7 +14,9 @@ void GameScene::resetGameObjects()
 void GameScene::onPowerUpStart()
 {
 	for (int i = 0; i < 4; i++) {
-		ghosts[i].SetSprite(SpriteCode::GHOST_ESCAPE);
+		if (ghosts[i].active) {
+			ghosts[i].SetMode(GhostMode::ESCAPE);
+		}
 	}
 }
 
@@ -22,7 +24,7 @@ void GameScene::onPowerUpEnd()
 {
 	for (int i = 0; i < 4; i++) {
 		if (ghosts[i].active) {
-			ghosts[i].SetSprite(SpriteCode::GHOST_RED + i);
+			ghosts[i].SetMode(GhostMode::NORMAL);
 		}
 	}
 }
@@ -81,7 +83,7 @@ int GameScene::Update(
 		}
 		if (collided > -1) {
 			if (this->game.powerUpTime > 0) {
-				ghosts[collided].OnEaten();
+				ghosts[collided].SetMode(GhostMode::DEAD);
 				this->game.score += 100;
 			} else {
 				if (this->game.lives <= 1) {

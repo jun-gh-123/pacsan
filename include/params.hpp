@@ -54,4 +54,12 @@ namespace TileCode {
 	};
 };
 
+namespace GhostMode {
+	enum {
+		NORMAL = 0,
+		ESCAPE,
+		DEAD
+	};
+};
+
 #endif
