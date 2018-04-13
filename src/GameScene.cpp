@@ -40,9 +40,10 @@ void GameScene::Init()
 
 	// init game objects
 	pacsan.Init();
-	for (int i = 0; i < 4; i++) {
-		ghosts[i].Init(SpriteCode::GHOST_RED + i);
-	}
+	ghosts[0].Init(SpriteCode::GHOST_RED, 20);
+	ghosts[1].Init(SpriteCode::GHOST_PINK, 10);
+	ghosts[2].Init(SpriteCode::GHOST_CYAN, 1);
+	ghosts[3].Init(SpriteCode::GHOST_ORANGE, 5);
 	resetGameObjects();
 
 	// init vartexts

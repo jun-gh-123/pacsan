@@ -2,13 +2,15 @@
 #include "Ghost.hpp"
 
 void Ghost::Init(
-	int spriteCode
+	int spriteCode,
+	int chaseRate
 )
 {
 	this->SetSprite(spriteCode);
 	this->defaultSpriteCode = spriteCode;
 	this->spd = 2;
 	this->mode = GhostMode::NORMAL;
+	this->chaseRate = chaseRate;
 }
 
 void Ghost::Reset(
@@ -117,7 +119,7 @@ void Ghost::Update(
 		if ((currentTile != TileCode::DOOR && atIntersection) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
 			std::random_device rd;
 			std::mt19937 rng(rd());
-			std::uniform_int_distribution<int> uni(0, 5);
+			std::uniform_int_distribution<int> uni(0, this->chaseRate);
 			Direction dir;
 
 			if (uni(rng) == 0) {
