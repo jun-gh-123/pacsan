@@ -17,12 +17,50 @@ void Ghost::Reset(
 {
 	GameObject::Reset(row, col);
 	this->SetMode(GhostMode::NORMAL);
+	this->started = false;
+}
+
+bool Ghost::checkStart(
+	int denominator,
+	Game *game
+)
+{
+	return game->pelletsEaten > game->pelletsRemaining / denominator;
 }
 
 void Ghost::Update(
 	Game *game
 )
 {
+	if (!this->started) {
+		switch (this->defaultSpriteCode) {
+			case SpriteCode::GHOST_RED:
+				this->started = true;
+				break;
+			case SpriteCode::GHOST_PINK:
+				this->started = checkStart(8, game);
+				break;
+			case SpriteCode::GHOST_CYAN:
+				this->started = checkStart(4, game);
+				break;
+			case SpriteCode::GHOST_ORANGE:
+				this->started = checkStart(2, game);
+				break;
+		}
+		if (!this->started) {
+			return;
+		}
+	}
+
+	if (this->defaultSpriteCode == SpriteCode::GHOST_ORANGE) {
+		if (game->pelletsEaten < game->pelletsRemaining / 2) {
+			this->started = false;
+			return;
+		} else {
+			this->started = true;
+		}
+	}
+
 	// blink ghost if powerup is about to expire
 	if (this->mode == GhostMode::ESCAPE) {
 		if (game->powerUpTime < 180) {
@@ -114,8 +152,12 @@ void Ghost::SetMode(
 		case GhostMode::DEAD:
 			this->active = false;
 			this->spd = 4;
-			this->x = this->x / BLOCKSIZE * BLOCKSIZE;
-			this->y = this->y / BLOCKSIZE * BLOCKSIZE;
+			if (this->x % 4 != 0) {
+				this->x += this->x % 4;
+			}
+			if (this->y %4 != 0) {
+				this->y += this->y % 4;
+			}
 			this->SetSprite(SpriteCode::GHOST_DEAD);
 			break;
 	}

@@ -14,7 +14,7 @@ void GameScene::resetGameObjects()
 void GameScene::onPowerUpStart()
 {
 	for (int i = 0; i < 4; i++) {
-		if (ghosts[i].active) {
+		if (ghosts[i].started && ghosts[i].active) {
 			ghosts[i].SetMode(GhostMode::ESCAPE);
 		}
 	}

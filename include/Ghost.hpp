@@ -7,7 +7,12 @@ class Ghost : public GameObject {
 	private:
 		int defaultSpriteCode = 0;
 		int blinkClock = 0;
+		bool checkStart(
+			int denominator,
+			Game *game
+		);
 	public:
+		bool started = false;
 		int mode = GhostMode::NORMAL;
 		void Init(int spriteCode);
 		void Update(Game *game);

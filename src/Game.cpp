@@ -54,7 +54,8 @@ void Game::LoadLevel(
 	Sprite *block = &sprites[SpriteCode::BLOCK];
 	Sprite *door = &sprites[SpriteCode::DOOR];
 	std::vector<int>* leveltiles = gManager.GetLevel(this->level);
-	this->numPellets = 0;
+	this->pelletsRemaining = 0;
+	this->pelletsEaten = 0;
 	for (int r = 0; r < ROWS; r++) {
 		for (int c = 0; c < COLS; c++) {
 			int tilecode = (*leveltiles)[r * COLS + c];
@@ -63,7 +64,7 @@ void Game::LoadLevel(
 			} else if (tilecode == TileCode::DOOR) {
 				door->Render(renderer, c * BLOCKSIZE, r * BLOCKSIZE);
 			} else if (tilecode == TileCode::PELLET || tilecode == TileCode::SUPER_PELLET) {
-				this->numPellets++;
+				this->pelletsRemaining++;
 			} else if (tilecode == TileCode::PACSAN) {
 				this->startRow = r;
 				this->startCol = c;
@@ -117,16 +118,16 @@ int Game::EatPellet(
 
 	if (tile == TileCode::PELLET) {
 		this->score += 10;
-		this->numPellets--;
+		this->pelletsEaten++;
 	} else if (tile == TileCode::SUPER_PELLET) {
 		this->score += 50;
-		this->numPellets--;
+		this->pelletsEaten++;
 		this->powerUpTime = 600;
 		this->onPowerUpStart();
 	}
 	this->tiles[row * COLS + col] = TileCode::EMPTY;
 
-	if (!this->levelCleared && this->numPellets <= 0) {
+	if (!this->levelCleared && this->pelletsEaten >= this->pelletsRemaining) {
 		gManager.ShowTexts("Level cleared", "Press <space> to advance.");
 		this->levelCleared = true;
 		this->paused = true;
@@ -225,7 +226,8 @@ void Game::UpdatePathmapPacsan(
 Direction Game::getPathDirection(
 	int *pathmap,
 	int row, int col,
-	bool chase
+	bool chase,
+	bool blockDoor
 )
 {
 	int up = row - 1 < 0 ? ROWS - 1 : row - 1;
@@ -237,23 +239,31 @@ Direction Game::getPathDirection(
 
 	n = pathmap[up * COLS + col];
 	if (n > -1 && (chase ? n < score : n > score)) {
-		score = n;
-		dir = Direction::UP;
+		if (!blockDoor || tiles[up * COLS + col] != TileCode::DOOR) {
+			score = n;
+			dir = Direction::UP;
+		}
 	}
 	n = pathmap[down * COLS + col];
 	if (n > -1 && (chase ? n < score : n > score)) {
-		score = n;
-		dir = Direction::DOWN;
+		if (!blockDoor || tiles[down * COLS + col] != TileCode::DOOR) {
+			score = n;
+			dir = Direction::DOWN;
+		}
 	}
 	n = pathmap[row * COLS + left];
 	if (n > -1 && (chase ? n < score : n > score)) {
-		score = n;
-		dir = Direction::LEFT;
+		if (!blockDoor || tiles[row * COLS + left] != TileCode::DOOR) {
+			score = n;
+			dir = Direction::LEFT;
+		}
 	}
 	n = pathmap[row * COLS + right];
 	if (n > -1 && (chase ? n < score : n > score)) {
-		score = n;
-		dir = Direction::RIGHT;
+		if (!blockDoor || tiles[row * COLS + right] != TileCode::DOOR) {
+			score = n;
+			dir = Direction::RIGHT;
+		}
 	}
 	return dir;
 }
@@ -263,7 +273,7 @@ Direction Game::GetDirectionToPacsan(
 	bool chase
 )
 {
-	return getPathDirection(this->pathmapPacsan, row, col, chase);
+	return getPathDirection(this->pathmapPacsan, row, col, chase, !chase);
 }
 
 Direction Game::GetDirectionToGhostBase(
