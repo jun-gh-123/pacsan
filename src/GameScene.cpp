@@ -9,6 +9,8 @@ void GameScene::resetGameObjects()
 	ghosts[1].Reset(ROWS / 2, COLS / 2);
 	ghosts[2].Reset(ROWS / 2, COLS / 2 - 1);
 	ghosts[3].Reset(ROWS / 2, COLS / 2 + 1);
+	this->countdown = 3;
+	this->countdownclock = 0;
 }
 
 void GameScene::onPowerUpStart()
@@ -51,10 +53,20 @@ void GameScene::Init()
 	scoreText.scale = 2.0f;
 	livesText.Init(&this->game.lives);
 	livesText.scale = 2.0f;
+	countdownText.Init(&this->countdown);
+	countdownText.scale = 8.0f;
 }
 
 int GameScene::Update()
 {
+	if (this->countdownclock < 180) {
+		this->countdownclock++;
+		if (this->countdownclock % 60 == 0) {
+			this->countdown--;
+		}
+		return SceneCode::GAME;
+	}
+
 	if (gManager.IsKeyPressed(SDL_SCANCODE_BACKSPACE)) {
 		return SceneCode::OPENING;
 	}
@@ -82,7 +94,7 @@ int GameScene::Update()
 		if (collided > -1) {
 			if (ghosts[collided].mode == GhostMode::ESCAPE) {
 				ghosts[collided].SetMode(GhostMode::DEAD);
-				this->game.score += 100;
+				this->game.score += 200;
 			} else {
 				if (this->game.lives <= 1) {
 					if (this->game.score > gManager.highscore) {
@@ -90,7 +102,7 @@ int GameScene::Update()
 					}
 					return SceneCode::GAMEOVER;
 				}
-				gManager.ShowTexts("DEAD", "Press <space> to continue.");
+				gManager.ShowTexts("YOU DIED", "Press <space> to restart.");
 				this->game.paused = true;
 			}
 		}
@@ -143,4 +155,19 @@ void GameScene::Draw()
 	this->scoreText.Draw();
 	this->livesText.x = WIDTH - this->livesText.GetWidth();
 	this->livesText.Draw();
+	if (this->countdown > 0) {
+		this->countdownText.x = WIDTH / 2 - this->countdownText.GetWidth() / 2;
+		this->countdownText.y = HEIGHT / 2 - this->countdownText.GetHeight() / 2;
+
+		const SDL_Rect rect = {
+			this->countdownText.x - 3,
+			this->countdownText.y - 3,
+			this->countdownText.GetWidth(),
+			this->countdownText.GetHeight()
+		};
+
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);
+		SDL_RenderFillRect(renderer, &rect);
+		this->countdownText.Draw();
+	}
 }

@@ -8,6 +8,10 @@ void OpeningScene::Init()
 	this->spriteCode = SpriteCode::PACSAN_OPEN;
 	this->highscoreText.Init(&gManager.highscore);
 	this->highscoreText.scale = 2.0f;
+	this->instructions.Set("HOW TO PLAY: Use arrow keys to move.", 255, 50, 50);
+	this->instructions.scale = 2.0f;
+	this->instructions.x = WIDTH / 2 - this->instructions.GetWidth() / 2;
+	this->instructions.y = HEIGHT - this->instructions.GetHeight() - 5;
 }
 
 int OpeningScene::Update()
@@ -37,4 +41,5 @@ void OpeningScene::Draw()
 		gManager.renderer, centerX, y, 0.0f, 1.5f
 	);
 	this->highscoreText.Draw();
+	this->instructions.Draw();
 }

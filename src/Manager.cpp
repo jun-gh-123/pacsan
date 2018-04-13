@@ -134,6 +134,21 @@ void Manager::RenderClear(
 void Manager::RenderPresent()
 {
 	if (this->textsVisible) {
+		int height = this->header.GetHeight() + this->subtext.GetHeight();
+		int hwidth = this->header.GetWidth();
+		int swidth = this->subtext.GetWidth();
+		int width = hwidth > swidth ? hwidth : swidth;
+		int x = hwidth > swidth ? this->header.x : this->subtext.x;
+
+		const SDL_Rect rect = {
+			x,
+			this->header.y,
+			width,
+			height
+		};
+		SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 200);
+		SDL_RenderFillRect(this->renderer, &rect);
+
 		// draw texts
 		this->header.Draw();
 		this->subtext.Draw();

@@ -9,6 +9,7 @@ class OpeningScene : public Scene {
 		int animateCount;
 		int spriteCode;
 		VariableText<int> highscoreText;
+		Text instructions;
 	public:
 		void Init();
 		int Update();

@@ -10,13 +10,14 @@
 
 class GameScene : public Scene {
 	private:
-		bool skipdown = false;
 		SDL_Texture *blocksTexture = 0;
 		Game game;
 		Pacsan pacsan;
 		Ghost ghosts[4];
+		int countdown, countdownclock;
 		VariableText<int> scoreText;
 		VariableText<int> livesText;
+		VariableText<int> countdownText;
 		void resetGameObjects();
 		void onPowerUpStart();
 		void onPowerUpEnd();
