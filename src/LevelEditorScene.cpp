@@ -80,8 +80,11 @@ int LevelEditorScene::Update()
 		this->currentLevel = this->currentLevel + 1 < gManager.NumLevels() ?
 			this->currentLevel + 1 : 0;
 	}
+	if (gManager.IsKeyPressed(SDL_SCANCODE_I)) {
+		gManager.InsertLevel(this->currentLevel);
+	}
 	if (gManager.IsKeyPressed(SDL_SCANCODE_A)) {
-		gManager.AddLevel(this->currentLevel);
+		this->currentLevel = gManager.AppendLevel();
 	}
 	if (gManager.IsKeyPressed(SDL_SCANCODE_D)) {
 		this->currentLevel = gManager.DeleteLevel(this->currentLevel);

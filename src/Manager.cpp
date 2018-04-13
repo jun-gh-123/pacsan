@@ -180,7 +180,7 @@ vector<int>* Manager::GetLevel(
 	return &(this->levels[level]);
 }
 
-vector<int>* Manager::AddLevel(
+vector<int>* Manager::InsertLevel(
 	int level
 )
 {
@@ -188,6 +188,13 @@ vector<int>* Manager::AddLevel(
 	auto it = this->levels.begin();
 	it = this->levels.insert(it + level, newLevel);
 	return &(*it);
+}
+
+int Manager::AppendLevel()
+{
+	vector<int> newLevel(LEVEL_TEMPLATE, LEVEL_TEMPLATE + ROWS * COLS);
+	this->levels.push_back(newLevel);
+	return this->levels.size() - 1;
 }
 
 void Manager::ResetLevel(

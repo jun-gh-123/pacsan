@@ -43,7 +43,8 @@ class Manager {
 		// levels
 		int NumLevels();
 		vector<int>* GetLevel(int level);
-		vector<int>* AddLevel(int level);
+		vector<int>* InsertLevel(int level);
+		int AppendLevel();
 		void ResetLevel(int level);
 		void SetTile(int level, int row, int col, int tile);
 		int DeleteLevel(int level);

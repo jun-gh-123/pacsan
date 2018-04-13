@@ -40,3 +40,6 @@ build-web: main.cpp
 
 gdb: build-desktop
 	cd $(BUILD_DIR)/desktop; gdb $(NAME)
+
+cplvls: $(BUILD_DIR)/desktop
+	cp $(BUILD_DIR)/desktop/assets/levels.txt assets
