@@ -66,6 +66,7 @@ bool Manager::Init()
 		printf("Failed to create SDL renderer: %s\n", SDL_GetError());
 		return false;
 	}
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	// load levels
 	if (!loadLevels("assets/levels.txt")) {
@@ -178,3 +179,154 @@ vector<int>* Manager::GetLevel(
 {
 	return &(this->levels[level]);
 }
+
+vector<int>* Manager::AddLevel(
+	int level
+)
+{
+	vector<int> newLevel(LEVEL_TEMPLATE, LEVEL_TEMPLATE + ROWS * COLS);
+	auto it = this->levels.begin();
+	it = this->levels.insert(it + level, newLevel);
+	return &(*it);
+}
+
+void Manager::ResetLevel(
+	int level
+)
+{
+	this->levels[level].assign(LEVEL_TEMPLATE, LEVEL_TEMPLATE + ROWS * COLS);
+}
+
+int Manager::DeleteLevel(
+	int level
+)
+{
+	if (this->levels.size() == 1) {
+		return 0;
+	}
+	auto it = this->levels.begin();
+	this->levels.erase(it + level);
+	if (level >= (int)this->levels.size()) {
+		return this->levels.size() - 1;
+	}
+	return level;
+}
+
+void Manager::SetTile(
+	int level,
+	int row, int col,
+	int tile
+)
+{
+	if (tile == TileCode::PACSAN) {
+		bool found = false;
+		for (int r = 0; r < ROWS && !found; r++) {
+			for (int c = 0; c < COLS && !found; c++) {
+				if (this->levels[level][r * COLS + c] == TileCode::PACSAN) {
+					this->levels[level][r * COLS + c] = TileCode::PELLET;
+					found = true;
+				}
+			}
+		}
+	} else {
+		if (this->levels[level][row * COLS + col] == TileCode::PACSAN) {
+			return;
+		}
+	}
+	this->levels[level][row * COLS + col] = tile;
+}
+
+int Manager::SaveLevelsToFile(
+	const char* filepath
+)
+{
+	ofstream levelsFile(filepath, ofstream::trunc);
+	if (!levelsFile.is_open()) {
+		return false;
+	}
+
+	int count = this->levels.size();
+	for (int l = 0; l < count; l++) {
+		for (int i = 0; i < ROWS * COLS; i++) {
+			int v = this->levels[l][i];
+			levelsFile << v;
+			if (i % COLS == 0) {
+				levelsFile << '\n';
+			} else {
+				levelsFile << ' ';
+			}
+		}
+		if (l < count - 1) {
+			levelsFile << '\n';
+		}
+	}
+
+	levelsFile.close();
+
+	return true;
+}
+
+Sprite* Manager::GetSprite(
+	int spritecode
+)
+{
+	return &(this->sprites[spritecode]);
+}
+
+void Manager::UpdateKeys(
+	const Uint8 *keystate,
+	int numkeys
+)
+{
+	if (this->keys.size() == 0) {
+		this->keys.assign(keystate, keystate + numkeys);
+	}
+	for (int i = 0; i < numkeys; i++) {
+		if (keystate[i]) {
+			if (this->keys[i] == KeyState::UP) {
+				this->keys[i] = KeyState::PRESS;
+			} else {
+				this->keys[i] = KeyState::DOWN;
+			}
+		} else {
+			if (this->keys[i] == KeyState::DOWN) {
+				this->keys[i] = KeyState::RELEASE;
+			} else {
+				this->keys[i] = KeyState::UP;
+			}
+		}
+	}
+}
+
+bool Manager::IsKeyPressed(
+	int scancode
+)
+{
+	return this->keys[scancode] == KeyState::PRESS;
+}
+
+bool Manager::IsKeyDown(
+	int scancode
+)
+{
+	return
+		this->keys[scancode] == KeyState::DOWN ||
+		this->keys[scancode] == KeyState::PRESS;
+}
+
+bool Manager::IsKeyReleased(
+	int scancode
+)
+{
+	return this->keys[scancode] == KeyState::RELEASE;
+}
+
+bool Manager::IsKeyUp(
+	int scancode
+)
+{
+	return
+		this->keys[scancode] == KeyState::UP ||
+		this->keys[scancode] == KeyState::RELEASE;
+}
+

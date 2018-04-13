@@ -6,11 +6,9 @@ void GameoverScene::Init()
 	gManager.ShowTexts("GAMEOVER", "Press <enter> to continue.");
 }
 
-int GameoverScene::Update(
-	const Uint8 *keystate
-)
+int GameoverScene::Update()
 {
-	if (keystate[SDL_SCANCODE_RETURN]) {
+	if (gManager.IsKeyPressed(SDL_SCANCODE_RETURN)) {
 		return SceneCode::OPENING;
 	}
 	return SceneCode::GAMEOVER;

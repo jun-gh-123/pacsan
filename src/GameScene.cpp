@@ -52,31 +52,28 @@ void GameScene::Init()
 	livesText.scale = 2.0f;
 }
 
-int GameScene::Update(
-	const Uint8 *keystate
-)
+int GameScene::Update()
 {
+	if (gManager.IsKeyPressed(SDL_SCANCODE_BACKSPACE)) {
+		return SceneCode::OPENING;
+	}
+
 	this->game.Update();
 
-	if (keystate[SDL_SCANCODE_S]) {
-		if (!skipdown) {
-			if (this->game.level + 1 >= this->game.maxLevel) {
-				this->game.level = -1;
-			}
-			this->game.NextLevel(&(this->blocksTexture));
-			resetGameObjects();
+	if (gManager.IsKeyPressed(SDL_SCANCODE_S)) {
+		if (this->game.level + 1 >= this->game.maxLevel) {
+			this->game.level = -1;
 		}
-		skipdown = true;
-	} else if (!keystate[SDL_SCANCODE_S]) {
-		skipdown = false;
+		this->game.NextLevel(&(this->blocksTexture));
+		resetGameObjects();
 	}
 
 	if (!this->game.paused) {
-		pacsan.Update(keystate, &this->game);
+		pacsan.Update(&this->game);
 
 		int collided = -1;
 		for (int i = 0; i < 4 && collided == -1; i++) {
-			ghosts[i].Update(keystate, &this->game);
+			ghosts[i].Update(&this->game);
 			if (pacsan.IsColliding(&ghosts[i])) {
 				collided = i;
 			}
@@ -97,7 +94,7 @@ int GameScene::Update(
 			}
 		}
 	} else {
-		if (keystate[SDL_SCANCODE_SPACE]) {
+		if (gManager.IsKeyPressed(SDL_SCANCODE_SPACE)) {
 			if (this->game.levelCleared) {
 				if (this->game.level + 1 >= this->game.maxLevel) {
 					if (this->game.score > gManager.highscore) {

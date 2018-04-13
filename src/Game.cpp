@@ -175,6 +175,9 @@ void Game::updatePathmap(
 	while (queue.size() > 0) {
 		PathmapItem pi = queue.front();
 		queue.pop();
+		if (pathmap[pi.row * COLS + pi.col] != -1) {
+			continue;
+		}
 		pathmap[pi.row * COLS + pi.col] = pi.score;
 
 		for (int i = -1; i <= 1; i += 2) {

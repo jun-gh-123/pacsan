@@ -10,9 +10,7 @@ void OpeningScene::Init()
 	this->highscoreText.scale = 2.0f;
 }
 
-int OpeningScene::Update(
-	const Uint8 *keystate
-)
+int OpeningScene::Update()
 {
 	if (++this->animateCount >= 30) {
 		if (this->spriteCode == SpriteCode::PACSAN_OPEN) {
@@ -22,8 +20,11 @@ int OpeningScene::Update(
 		}
 		this->animateCount = 0;
 	}
-	if (keystate[SDL_SCANCODE_SPACE]) {
+	if (gManager.IsKeyPressed(SDL_SCANCODE_SPACE)) {
 		return SceneCode::GAME;
+	}
+	if (gManager.IsKeyPressed(SDL_SCANCODE_E)) {
+		return SceneCode::EDITOR;
 	}
 	return SceneCode::OPENING;
 }

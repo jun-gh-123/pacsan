@@ -3,14 +3,12 @@
 
 void EndingScene::Init()
 {
-	gManager.ShowTexts("YOU WIN", "Good job. Press <enter> to continue.");
+	gManager.ShowTexts("YOU WIN", "Press <enter> to continue.");
 }
 
-int EndingScene::Update(
-	const Uint8 *keystate
-)
+int EndingScene::Update()
 {
-	if (keystate[SDL_SCANCODE_RETURN]) {
+	if (gManager.IsKeyPressed(SDL_SCANCODE_RETURN)) {
 		return SceneCode::OPENING;
 	}
 	return SceneCode::ENDING;

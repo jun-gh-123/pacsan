@@ -22,7 +22,7 @@ class GameScene : public Scene {
 		void onPowerUpEnd();
 	public:
 		void Init();
-		int Update(const Uint8 *keystate);
+		int Update();
 		void Draw();
 };
 

@@ -17,6 +17,7 @@
 #include "GameScene.hpp"
 #include "GameoverScene.hpp"
 #include "EndingScene.hpp"
+#include "LevelEditorScene.hpp"
 
 // globals
 Manager gManager;
@@ -26,6 +27,7 @@ OpeningScene opening;
 GameScene game;
 GameoverScene gameover;
 EndingScene ending;
+LevelEditorScene editor;
 bool quit = false;
 
 void setScene(int sceneCode) {
@@ -41,6 +43,9 @@ void setScene(int sceneCode) {
 			break;
 		case SceneCode::ENDING:
 			scene = &ending;
+			break;
+		case SceneCode::EDITOR:
+			scene = &editor;
 			break;
 	}
 	scene->Init();
@@ -78,8 +83,10 @@ void loop(void *arg)
 		return;
 	}
 
-	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-	int sceneCode = scene->Update(keystate);
+	int numkeys = 0;
+	const Uint8 *keystate = SDL_GetKeyboardState(&numkeys);
+	gManager.UpdateKeys(keystate, numkeys);
+	int sceneCode = scene->Update();
 	if (sceneCode != sceneCodeCurrent) {
 		setScene(sceneCode);
 	}

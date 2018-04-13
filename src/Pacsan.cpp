@@ -1,4 +1,5 @@
 #include "Pacsan.hpp"
+#include "globals.hpp"
 
 void Pacsan::Init()
 {
@@ -16,20 +17,19 @@ void Pacsan::Reset(
 }
 
 void Pacsan::Update(
-	const Uint8 *keystate,
 	Game *game
 )
 {
-	if (keystate[SDL_SCANCODE_UP]) {
+	if (gManager.IsKeyDown(SDL_SCANCODE_UP)) {
 		this->nextDirection = Direction::UP;
 	}
-	if (keystate[SDL_SCANCODE_DOWN]) {
+	if (gManager.IsKeyDown(SDL_SCANCODE_DOWN)) {
 		this->nextDirection = Direction::DOWN;
 	}
-	if (keystate[SDL_SCANCODE_LEFT]) {
+	if (gManager.IsKeyDown(SDL_SCANCODE_LEFT)) {
 		this->nextDirection = Direction::LEFT;
 	}
-	if (keystate[SDL_SCANCODE_RIGHT]) {
+	if (gManager.IsKeyDown(SDL_SCANCODE_RIGHT)) {
 		this->nextDirection = Direction::RIGHT;
 	}
 
@@ -75,7 +75,8 @@ void Pacsan::Update(
 			return;
 		}
 
-		if (getTileInDirection(this->nextDirection, game) != TileCode::BLOCK) {
+		int tile = getTileInDirection(this->nextDirection, game);
+		if (tile != TileCode::BLOCK && tile != TileCode::DOOR) {
 			this->direction = this->nextDirection;
 			this->nextDirection = this->direction;
 			this->moving = true;
@@ -97,7 +98,8 @@ void Pacsan::Update(
 					break;
 			}
 		} else {
-			if (getTileInDirection(this->direction, game) == TileCode::BLOCK) {
+			tile = getTileInDirection(this->direction, game);
+			if (tile == TileCode::BLOCK || tile == TileCode::DOOR) {
 				this->moving = false;
 				this->SetSprite(SpriteCode::PACSAN_OPEN);
 			}

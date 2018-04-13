@@ -20,7 +20,6 @@ void Ghost::Reset(
 }
 
 void Ghost::Update(
-	const Uint8 *keystate,
 	Game *game
 )
 {

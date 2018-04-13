@@ -11,7 +11,7 @@ class OpeningScene : public Scene {
 		VariableText<int> highscoreText;
 	public:
 		void Init();
-		int Update(const Uint8 *keystate);
+		int Update();
 		void Draw();
 };
 

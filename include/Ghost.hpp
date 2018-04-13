@@ -10,7 +10,7 @@ class Ghost : public GameObject {
 	public:
 		int mode = GhostMode::NORMAL;
 		void Init(int spriteCode);
-		void Update(const Uint8 *keystate, Game *game);
+		void Update(Game *game);
 		void Reset(int row, int col);
 		void SetMode(int mode);
 };
