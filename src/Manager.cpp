@@ -257,7 +257,7 @@ int Manager::SaveLevelsToFile(
 		for (int i = 0; i < ROWS * COLS; i++) {
 			int v = this->levels[l][i];
 			levelsFile << v;
-			if (i % COLS == 0) {
+			if ((i + 1) % COLS == 0) {
 				levelsFile << '\n';
 			} else {
 				levelsFile << ' ';

@@ -79,7 +79,7 @@ int GameScene::Update()
 			}
 		}
 		if (collided > -1) {
-			if (this->game.powerUpTime > 0) {
+			if (ghosts[collided].mode == GhostMode::ESCAPE) {
 				ghosts[collided].SetMode(GhostMode::DEAD);
 				this->game.score += 100;
 			} else {

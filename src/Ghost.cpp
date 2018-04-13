@@ -104,6 +104,7 @@ void Ghost::SetMode(
 	switch (mode) {
 		case GhostMode::NORMAL:
 			this->active = true;
+			this->spd = 2;
 			this->SetSprite(this->defaultSpriteCode);
 			break;
 		case GhostMode::ESCAPE:
@@ -112,6 +113,9 @@ void Ghost::SetMode(
 			break;
 		case GhostMode::DEAD:
 			this->active = false;
+			this->spd = 4;
+			this->x = this->x / BLOCKSIZE * BLOCKSIZE;
+			this->y = this->y / BLOCKSIZE * BLOCKSIZE;
 			this->SetSprite(SpriteCode::GHOST_DEAD);
 			break;
 	}
