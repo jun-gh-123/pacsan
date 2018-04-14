@@ -9,7 +9,7 @@ void Game::Init()
 	this->maxLevel = gManager.NumLevels();
 	this->level = 0;
 	this->score = 0;
-	this->lives = 3;
+	this->lives = 2;
 	this->levelCleared = false;
 	this->paused = false;
 	this->powerUpTime = 0;

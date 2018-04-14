@@ -9,7 +9,7 @@ SRC_DIR = src
 SRC = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_DIR = .obj
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, %, $(SRC))
-EM_SDL_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]'
+EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]'
 
 .PHONY: clean
 
@@ -37,7 +37,7 @@ build-desktop: $(patsubst %, $(OBJ_DIR)/%.o, $(OBJS)) main.cpp
 build-web: main.cpp
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/web
-	em++ -O2 -std=c++11 main.cpp $(SRC) $(EM_SDL_FLAGS) --embed-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
+	em++ -O2 -std=c++11 main.cpp $(SRC) $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
 
 gdb: build-desktop
 	cd $(BUILD_DIR)/desktop; gdb $(NAME)

@@ -3,7 +3,7 @@
 
 void GameoverScene::Init()
 {
-	gManager.ShowTexts("GAMEOVER", "Press <enter> to continue.");
+	gManager.ShowTexts("GAMEOVER", "Press <space> to continue.");
 	gManager.PlaySound(SoundCode::GAMEOVER);
 	this->scoretext.Init(&gManager.lastscore);
 	this->scoretext.scale = 4.0f;
@@ -13,7 +13,7 @@ void GameoverScene::Init()
 
 int GameoverScene::Update()
 {
-	if (gManager.IsKeyPressed(SDL_SCANCODE_RETURN)) {
+	if (gManager.IsKeyPressed(SDL_SCANCODE_SPACE)) {
 		gManager.StopAllAudio();
 		return SceneCode::OPENING;
 	}

@@ -28,7 +28,7 @@ class Game {
 	public:
 		int tiles[ROWS * COLS];
 		bool paused = false;
-		int lives = 3;
+		int lives = 2;
 		int score = 0;
 		int pelletsRemaining = 0;
 		int pelletsEaten = 0;

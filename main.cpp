@@ -70,16 +70,15 @@ void loop(void *arg)
 		if (e.type == SDL_QUIT) {
 			quit = true;
 		}
+		#ifndef __EMSCRIPTEN__
 		if (e.type == SDL_KEYDOWN) {
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
 			}
 		}
+		#endif
 	}
 	if (quit) {
-		#ifdef __EMSCRIPTEN__
-		emscripten_cancel_main_loop();
-		#endif
 		return;
 	}
 

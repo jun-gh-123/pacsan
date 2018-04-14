@@ -43,12 +43,16 @@ bool Manager::loadAudio(
 {
 	bool result = true;
 	if (isSound) {
-		this->sound[id] = Mix_LoadWAV(filepath);
+		this->sound[id] = Mix_LoadWAV_RW(SDL_RWFromFile(filepath, "rb"), 1);
 		if (!this->sound[id]) {
 			result = false;
 		}
 	} else {
+		#ifdef __EMSCRIPTEN__
+		this->music[id] = Mix_LoadMUS_RW(SDL_RWFromFile(filepath, "rb"));
+		#else
 		this->music[id] = Mix_LoadMUS(filepath);
+		#endif
 		if (!this->music[id]) {
 			result = false;
 		}
@@ -162,16 +166,16 @@ bool Manager::Init()
 	if (!loadAudio(SoundCode::YOUWIN, "assets/youwin.wav")) {
 		return false;
 	}
-	if (!loadAudio(MusicCode::BGM1, "assets/bgm1.mp3", false)) {
+	if (!loadAudio(MusicCode::BGM1, "assets/bgm1.ogg", false)) {
 		return false;
 	}
-	if (!loadAudio(MusicCode::BGM2, "assets/bgm2.mp3", false)) {
+	if (!loadAudio(MusicCode::BGM2, "assets/bgm2.ogg", false)) {
 		return false;
 	}
-	if (!loadAudio(MusicCode::BGM3, "assets/bgm3.mp3", false)) {
+	if (!loadAudio(MusicCode::BGM3, "assets/bgm3.ogg", false)) {
 		return false;
 	}
-	if (!loadAudio(MusicCode::POWERUP, "assets/powerup.mp3", false)) {
+	if (!loadAudio(MusicCode::POWERUP, "assets/powerup.ogg", false)) {
 		return false;
 	}
 	return true;
@@ -403,6 +407,7 @@ void Manager::PlayMusic(
 	int id
 )
 {
+	Mix_HaltMusic();
 	Mix_PlayMusic(this->music[id], -1);
 }
 

@@ -122,17 +122,17 @@ int GameScene::Update()
 		if (gManager.IsKeyPressed(SDL_SCANCODE_SPACE)) {
 			if (this->game.levelCleared) {
 				if (this->game.level + 1 >= this->game.maxLevel) {
-					this->game.score += (this->game.lives - 1) * 5000;
+					this->game.score += this->game.lives * 5000;
 					gManager.LogScore(this->game.score);
 					return SceneCode::ENDING;
 				}
 				this->game.NextLevel(&(this->blocksTexture));
 			} else {
-				this->game.NewLife();
-				if (this->game.lives <= 0) {
+				if (this->game.lives == 0) {
 					gManager.LogScore(this->game.score);
 					return SceneCode::GAMEOVER;
 				}
+				this->game.NewLife();
 			}
 			resetGameObjects();
 		}
