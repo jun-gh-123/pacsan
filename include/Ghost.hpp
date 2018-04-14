@@ -6,7 +6,6 @@
 class Ghost : public GameObject {
 	private:
 		int defaultSpriteCode = 0;
-		int blinkClock = 0;
 		int chaseRate = 1;
 		bool checkStart(
 			int denominator,

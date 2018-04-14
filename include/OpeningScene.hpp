@@ -10,6 +10,8 @@ class OpeningScene : public Scene {
 		int spriteCode;
 		VariableText<int> highscoreText;
 		Text instructions;
+		Text creditLabel;
+		Text credit;
 	public:
 		void Init();
 		int Update();

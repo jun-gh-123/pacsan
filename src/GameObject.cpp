@@ -99,11 +99,8 @@ Direction GameObject::getRandomDirection(
 )
 {
 	bool found = false;
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> uni(0, 4);
 	while (!found) {
-		Direction nextDirection = (Direction) uni(rng);
+		Direction nextDirection = (Direction) gManager.GetRandomInt(1, 4);
 		int tile = getTileInDirection(nextDirection, game);
 		if (tile != TileCode::BLOCK) {
 			if (tile != TileCode::DOOR || (nextDirection == Direction::UP && tile == TileCode::DOOR)) {

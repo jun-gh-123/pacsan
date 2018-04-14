@@ -1,5 +1,5 @@
-#include <random>
 #include "Ghost.hpp"
+#include "globals.hpp"
 
 void Ghost::Init(
 	int spriteCode,
@@ -66,13 +66,10 @@ void Ghost::Update(
 	// blink ghost if powerup is about to expire
 	if (this->mode == GhostMode::ESCAPE) {
 		if (game->powerUpTime < 180) {
-			if (++this->blinkClock > 10) {
-				if (this->spriteCode == SpriteCode::GHOST_ESCAPE) {
-					this->SetSprite(SpriteCode::GHOST_WHITE);
-				} else {
-					this->SetSprite(SpriteCode::GHOST_ESCAPE);
-				}
-				this->blinkClock = 0;
+			if (game->blinkOn) {
+				this->SetSprite(SpriteCode::GHOST_WHITE);
+			} else {
+				this->SetSprite(SpriteCode::GHOST_ESCAPE);
 			}
 		}
 	}
@@ -117,12 +114,8 @@ void Ghost::Update(
 		int tile = getTileInDirection(this->direction, game);
 		bool atIntersection = isAtIntersection(game);
 		if ((currentTile != TileCode::DOOR && atIntersection) || this->direction == Direction::NONE || tile == TileCode::BLOCK || tile == TileCode::DOOR) {
-			std::random_device rd;
-			std::mt19937 rng(rd());
-			std::uniform_int_distribution<int> uni(0, this->chaseRate);
 			Direction dir;
-
-			if (uni(rng) == 0) {
+			if (gManager.GetRandomInt(0, this->chaseRate) == 0) {
 				dir = getRandomDirection(row, col, game);
 			} else {
 				if (this->mode == GhostMode::NORMAL) {
@@ -148,7 +141,6 @@ void Ghost::SetMode(
 			this->SetSprite(this->defaultSpriteCode);
 			break;
 		case GhostMode::ESCAPE:
-			this->blinkClock = 0;
 			this->SetSprite(SpriteCode::GHOST_ESCAPE);
 			break;
 		case GhostMode::DEAD:

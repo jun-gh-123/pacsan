@@ -36,6 +36,8 @@ class Game {
 		int startRow, startCol;
 		bool levelCleared = false;
 		int powerUpTime = 0;
+		int blinkClock = 0;
+		bool blinkOn = false;
 		std::function<void()> onPowerUpStart = 0;
 		std::function<void()> onPowerUpEnd = 0;
 

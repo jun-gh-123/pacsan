@@ -64,6 +64,30 @@ namespace GhostMode {
 	};
 };
 
+namespace SoundCode {
+	enum {
+		EAT = 0,
+		EAT_GHOST,
+		GET_POWERUP,
+		STAGE_START,
+		STAGE_CLEAR,
+		DIED,
+		GAMEOVER,
+		YOUWIN,
+		_SIZE
+	};
+};
+
+namespace MusicCode {
+	enum {
+		BGM1 = 0,
+		BGM2,
+		BGM3,
+		POWERUP,
+		_SIZE
+	};
+};
+
 namespace KeyState {
 	enum {
 		UP = 0,

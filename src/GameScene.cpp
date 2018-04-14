@@ -4,6 +4,7 @@
 
 void GameScene::resetGameObjects()
 {
+
 	pacsan.Reset(this->game.startRow, this->game.startCol);
 	ghosts[0].Reset(ROWS / 2 - 2, COLS / 2);
 	ghosts[1].Reset(ROWS / 2, COLS / 2);
@@ -11,6 +12,11 @@ void GameScene::resetGameObjects()
 	ghosts[3].Reset(ROWS / 2, COLS / 2 + 1);
 	this->countdown = 3;
 	this->countdownclock = 0;
+
+	gManager.StopAllAudio();
+	this->stageMusicId = gManager.GetRandomInt(MusicCode::BGM1, MusicCode::BGM3);
+	gManager.PlaySound(SoundCode::STAGE_START);
+	this->game.powerUpTime = 0;
 }
 
 void GameScene::onPowerUpStart()
@@ -20,6 +26,9 @@ void GameScene::onPowerUpStart()
 			ghosts[i].SetMode(GhostMode::ESCAPE);
 		}
 	}
+	if (this->game.powerUpTime == 0) {
+		gManager.PlayMusic(MusicCode::POWERUP);
+	}
 }
 
 void GameScene::onPowerUpEnd()
@@ -28,6 +37,9 @@ void GameScene::onPowerUpEnd()
 		if (ghosts[i].active) {
 			ghosts[i].SetMode(GhostMode::NORMAL);
 		}
+	}
+	if (!this->game.paused) {
+		gManager.PlayMusic(this->stageMusicId);
 	}
 }
 
@@ -64,6 +76,9 @@ int GameScene::Update()
 		if (this->countdownclock % 60 == 0) {
 			this->countdown--;
 		}
+		if (this->countdownclock == 180) {
+			gManager.PlayMusic(this->stageMusicId);
+		}
 		return SceneCode::GAME;
 	}
 
@@ -93,15 +108,12 @@ int GameScene::Update()
 		}
 		if (collided > -1) {
 			if (ghosts[collided].mode == GhostMode::ESCAPE) {
+				gManager.PlaySound(SoundCode::EAT_GHOST);
 				ghosts[collided].SetMode(GhostMode::DEAD);
 				this->game.score += 200;
 			} else {
-				if (this->game.lives <= 1) {
-					if (this->game.score > gManager.highscore) {
-						gManager.highscore = this->game.score;
-					}
-					return SceneCode::GAMEOVER;
-				}
+				gManager.StopMusic();
+				gManager.PlaySound(SoundCode::DIED);
 				gManager.ShowTexts("YOU DIED", "Press <space> to restart.");
 				this->game.paused = true;
 			}
@@ -110,14 +122,17 @@ int GameScene::Update()
 		if (gManager.IsKeyPressed(SDL_SCANCODE_SPACE)) {
 			if (this->game.levelCleared) {
 				if (this->game.level + 1 >= this->game.maxLevel) {
-					if (this->game.score > gManager.highscore) {
-						gManager.highscore = this->game.score;
-					}
+					this->game.score += (this->game.lives - 1) * 5000;
+					gManager.LogScore(this->game.score);
 					return SceneCode::ENDING;
 				}
 				this->game.NextLevel(&(this->blocksTexture));
 			} else {
 				this->game.NewLife();
+				if (this->game.lives <= 0) {
+					gManager.LogScore(this->game.score);
+					return SceneCode::GAMEOVER;
+				}
 			}
 			resetGameObjects();
 		}
@@ -132,6 +147,15 @@ void GameScene::Draw()
 	Sprite *sprites = gManager.sprites;
 
 	// draw blocks
+	if (this->game.powerUpTime == 0) {
+		SDL_SetTextureColorMod(this->blocksTexture, 50, 100, 255);
+	} else {
+		if (this->game.blinkOn) {
+			SDL_SetTextureColorMod(this->blocksTexture, 255, 150, 200);
+		} else {
+			SDL_SetTextureColorMod(this->blocksTexture, 255, 50, 100);
+		}
+	}
 	SDL_RenderCopy(renderer, this->blocksTexture, NULL, NULL);
 
 	// draw pellets
@@ -148,10 +172,10 @@ void GameScene::Draw()
 		}
 	}
 
-	this->pacsan.Draw();
 	for (int i = 0; i < 4; i++) {
 		this->ghosts[i].Draw();
 	}
+	this->pacsan.Draw();
 	this->scoreText.Draw();
 	this->livesText.x = WIDTH - this->livesText.GetWidth();
 	this->livesText.Draw();

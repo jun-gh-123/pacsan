@@ -119,16 +119,22 @@ int Game::EatPellet(
 	if (tile == TileCode::PELLET) {
 		this->score += 10;
 		this->pelletsEaten++;
+		gManager.PlaySound(SoundCode::EAT);
 	} else if (tile == TileCode::SUPER_PELLET) {
 		this->score += 50;
 		this->pelletsEaten++;
-		this->powerUpTime = 600;
 		this->onPowerUpStart();
+		this->powerUpTime = 600;
+		this->blinkClock = 0;
+		this->blinkOn = false;
+		gManager.PlaySound(SoundCode::GET_POWERUP);
 	}
 	this->tiles[row * COLS + col] = TileCode::EMPTY;
 
 	if (!this->levelCleared && this->pelletsEaten >= this->pelletsRemaining) {
 		gManager.ShowTexts("Level cleared", "Press <space> to advance.");
+		gManager.StopMusic();
+		gManager.PlaySound(SoundCode::STAGE_CLEAR);
 		this->levelCleared = true;
 		this->paused = true;
 	}
@@ -138,10 +144,17 @@ int Game::EatPellet(
 void Game::Update()
 {
 	if (this->powerUpTime > 0) {
+		if (this->powerUpTime < 180) {
+			if (++this->blinkClock > 10) {
+				this->blinkClock = 0;
+				this->blinkOn = !this->blinkOn;
+			}
+		}
 		this->powerUpTime--;
 		if (this->powerUpTime <= 0) {
 			this->onPowerUpEnd();
 			this->powerUpTime = 0;
+			this->blinkOn = false;
 		}
 	}
 }

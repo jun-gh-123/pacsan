@@ -35,9 +35,33 @@ bool Manager::loadLevels(
 	return true;
 }
 
+bool Manager::loadAudio(
+	int id,
+	const char *filepath,
+	bool isSound
+)
+{
+	bool result = true;
+	if (isSound) {
+		this->sound[id] = Mix_LoadWAV(filepath);
+		if (!this->sound[id]) {
+			result = false;
+		}
+	} else {
+		this->music[id] = Mix_LoadMUS(filepath);
+		if (!this->music[id]) {
+			result = false;
+		}
+	}
+	if (!result) {
+		printf("Failed to load audio: %s\n", Mix_GetError());
+	}
+	return result;
+}
+
 bool Manager::Init()
 {
-	if (!(SDL_Init(SDL_INIT_VIDEO) == 0)) {
+	if (!(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0)) {
 		printf("Failed to initialize SDL: %s\n", SDL_GetError());
 		return false;
 	}
@@ -46,7 +70,11 @@ bool Manager::Init()
 		return false;
 	}
 	if (!(TTF_Init() == 0)) {
-		printf("Failed to inialize SDL_ttf: %s\n", TTF_GetError());
+		printf("Failed to initialize SDL_ttf: %s\n", TTF_GetError());
+		return false;
+	}
+	if (!(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == 0)) {
+		printf("Failed to initialize SDL_mixer: %s\n", Mix_GetError());
 		return false;
 	}
 	window = SDL_CreateWindow(
@@ -102,7 +130,6 @@ bool Manager::Init()
 			x++;
 		}
 	}
-	sprites[SpriteCode::BLOCK].SetColor(50, 100, 255);
 	sprites[SpriteCode::PACSAN_OPEN].SetColor(255, 255, 120);
 	sprites[SpriteCode::PACSAN_CLOSE].SetColor(255, 255, 120);
 	sprites[SpriteCode::GHOST_RED].SetColor(255, 95, 95);
@@ -110,17 +137,62 @@ bool Manager::Init()
 	sprites[SpriteCode::GHOST_CYAN].SetColor(0, 255, 255);
 	sprites[SpriteCode::GHOST_ORANGE].SetColor(255, 180, 80);
 
+	// load sounds
+	if (!loadAudio(SoundCode::EAT, "assets/eat.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::EAT_GHOST, "assets/eat_ghost.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::GET_POWERUP, "assets/get_powerup.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::STAGE_START, "assets/stage_start.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::STAGE_CLEAR, "assets/stage_clear.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::DIED, "assets/died.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::GAMEOVER, "assets/gameover.wav")) {
+		return false;
+	}
+	if (!loadAudio(SoundCode::YOUWIN, "assets/youwin.wav")) {
+		return false;
+	}
+	if (!loadAudio(MusicCode::BGM1, "assets/bgm1.mp3", false)) {
+		return false;
+	}
+	if (!loadAudio(MusicCode::BGM2, "assets/bgm2.mp3", false)) {
+		return false;
+	}
+	if (!loadAudio(MusicCode::BGM3, "assets/bgm3.mp3", false)) {
+		return false;
+	}
+	if (!loadAudio(MusicCode::POWERUP, "assets/powerup.mp3", false)) {
+		return false;
+	}
 	return true;
 }
 
 void Manager::Quit()
 {
+	for (int i = 0; i < SoundCode::_SIZE; i++) {
+		Mix_FreeChunk(this->sound[i]);
+	}
+	for (int i = 0; i < MusicCode::_SIZE; i++) {
+		Mix_FreeMusic(this->music[i]);
+	}
 	SDL_DestroyTexture(spritesheet);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
+
+	Mix_Quit();
 	IMG_Quit();
 	TTF_Quit();
+	SDL_Quit();
 }
 
 void Manager::RenderClear(
@@ -155,6 +227,25 @@ void Manager::RenderPresent()
 	}
 
 	SDL_RenderPresent(this->renderer);
+}
+
+int Manager::GetRandomInt(
+	int min, int max
+)
+{
+	mt19937 rng(rd());
+	uniform_int_distribution<int> uni(min, max);
+	return uni(rng);
+}
+
+void Manager::LogScore(
+	int score
+)
+{
+	if (score > this->highscore) {
+		this->highscore = score;
+	}
+	this->lastscore = score;
 }
 
 void Manager::HideTexts()
@@ -295,6 +386,31 @@ Sprite* Manager::GetSprite(
 	return &(this->sprites[spritecode]);
 }
 
+void Manager::StopAllAudio()
+{
+	Mix_HaltChannel(-1);
+	StopMusic();
+}
+
+void Manager::PlaySound(
+	int id
+)
+{
+	Mix_PlayChannel(-1, this->sound[id], 0);
+}
+
+void Manager::PlayMusic(
+	int id
+)
+{
+	Mix_PlayMusic(this->music[id], -1);
+}
+
+void Manager::StopMusic()
+{
+	Mix_HaltMusic();
+}
+
 void Manager::UpdateKeys(
 	const Uint8 *keystate,
 	int numkeys
@@ -351,4 +467,3 @@ bool Manager::IsKeyUp(
 		this->keys[scancode] == KeyState::UP ||
 		this->keys[scancode] == KeyState::RELEASE;
 }
-

@@ -15,6 +15,7 @@ class GameScene : public Scene {
 		Pacsan pacsan;
 		Ghost ghosts[4];
 		int countdown, countdownclock;
+		int stageMusicId = 0;
 		VariableText<int> scoreText;
 		VariableText<int> livesText;
 		VariableText<int> countdownText;
