@@ -1,46 +1,63 @@
 NAME = pacsan
 CC = g++
 INCLUDE_FLAGS = -Iinclude -Isrc
-COMPILER_FLAGS = -Wall -g
+DEBUG_COMPILER_FLAGS = -Wall -g
+RELEASE_COMPILER_FLAGS = -O3 -DNDEBUG
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-BUILD_DIR = build
+DEBUG_DIR = debug
+RELEASE_DIR = release
 ASSETS_DIR = assets
 SRC_DIR = src
 SRC = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_DIR = .obj
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, %, $(SRC))
 EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]'
+EM_HTML_TEMPLATE = html/template.html
 
 .PHONY: clean
 
-desktop: build-desktop
-	cd $(BUILD_DIR)/desktop; ./$(NAME)
-	cp $(BUILD_DIR)/desktop/assets/levels.txt assets
+debug-linux: build-debug-linux
+	cd $(DEBUG_DIR)/linux; ./$(NAME)
+	cp $(DEBUG_DIR)/linux/assets/levels.txt assets
 
-web: build-web
-	firefox $(BUILD_DIR)/web/$(NAME).html
+debug-web: build-debug-web
+	firefox $(DEBUG_DIR)/web/$(NAME).html
 
 clean:
 	rm -rf $(OBJ_DIR)
-	rm -rf $(BUILD_DIR)
+	rm -rf $(DEBUG_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
 	$(CC) $< -c $(INCLUDE_FLAGS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
-build-desktop: $(patsubst %, $(OBJ_DIR)/%.o, $(OBJS)) main.cpp
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(BUILD_DIR)/desktop
-	$(CC) $^ $(INCLUDE_FLAGS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(BUILD_DIR)/desktop/$(NAME)
-	cp -r $(ASSETS_DIR) $(BUILD_DIR)/desktop
+build-debug-linux: $(patsubst %, $(OBJ_DIR)/%.o, $(OBJS)) main.cpp
+	mkdir -p $(DEBUG_DIR)
+	mkdir -p $(DEBUG_DIR)/linux
+	$(CC) $^ $(INCLUDE_FLAGS) $(DEBUG_COMPILER_FLAGS) $(LINKER_FLAGS) -o $(DEBUG_DIR)/linux/$(NAME)
+	cp -r $(ASSETS_DIR) $(DEBUG_DIR)/linux
 
-build-web: main.cpp
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(BUILD_DIR)/web
-	em++ -O2 -std=c++11 main.cpp $(SRC) $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(BUILD_DIR)/web/$(NAME).html
+build-debug-web: $(SRC) main.cpp
+	mkdir -p $(DEBUG_DIR)
+	mkdir -p $(DEBUG_DIR)/web
+	em++ -g -Wall -std=c++11 $^ $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(DEBUG_DIR)/web/$(NAME).html
 
-gdb: build-desktop
-	cd $(BUILD_DIR)/desktop; gdb $(NAME)
+build-release-linux: $(SRC) main.cpp
+	rm -rf $(RELEASE_DIR)/linux
+	mkdir -p $(RELEASE_DIR)
+	mkdir -p $(RELEASE_DIR)/linux
+	$(CC) $^ $(INCLUDE_FLAGS) $(RELEASE_COMPILER_FLAGS) $(LINKER_FLAGS) -o $(RELEASE_DIR)/linux/$(NAME)
+	cp -r $(ASSETS_DIR) $(RELEASE_DIR)/linux
 
-cplvls: $(BUILD_DIR)/desktop
-	cp $(BUILD_DIR)/desktop/assets/levels.txt assets
+build-release-web: $(SRC) main.cpp
+	rm -rf $(RELEASE_DIR)/web
+	mkdir -p $(RELEASE_DIR)
+	mkdir -p $(RELEASE_DIR)/web
+	em++ -O3 -std=c++11 $^ $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(RELEASE_DIR)/web/$(NAME).js
+	cp $(EM_HTML_TEMPLATE) $(RELEASE_DIR)/web/index.html
+
+gdb: build-linux
+	cd $(DEBUG_DIR)/linux; gdb $(NAME)
+
+cplvls: $(DEBUG_DIR)/linux
+	cp $(DEBUG_DIR)/linux/assets/levels.txt assets
