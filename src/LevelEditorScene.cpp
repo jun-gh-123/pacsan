@@ -108,6 +108,7 @@ void LevelEditorScene::Draw()
 			switch (tilecode) {
 				case TileCode::BLOCK:
 					tile = gManager.GetSprite(SpriteCode::BLOCK);
+					tile->SetColor(50, 100, 255);
 					break;
 				case TileCode::PELLET:
 					tile = gManager.GetSprite(SpriteCode::PELLET);
@@ -126,6 +127,9 @@ void LevelEditorScene::Draw()
 			}
 			if (tile) {
 				tile->Render(gManager.renderer, c * BLOCKSIZE, r * BLOCKSIZE);
+				if (tilecode == TileCode::BLOCK) {
+					tile->SetColor(255, 255, 255);
+				}
 			}
 		}
 	}
