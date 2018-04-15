@@ -65,7 +65,7 @@ gh-pages: clean-release $(RELEASE_DIR)/web
 	cp -a $(RELEASE_DIR)/web/. .
 	git add $(shell ls $(RELEASE_DIR)/web | xargs -n 1 basename)
 	git commit -m "release"
-	git push origin gh-pages
+	git push -f origin gh-pages
 	git checkout -f master
 
 gdb: build-linux
