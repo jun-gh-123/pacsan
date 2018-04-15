@@ -16,45 +16,57 @@ EM_HTML_TEMPLATE = html/template.html
 
 .PHONY: clean
 
-debug-linux: build-debug-linux
+debug-linux: $(DEBUG_DIR)/linux
 	cd $(DEBUG_DIR)/linux; ./$(NAME)
 	cp $(DEBUG_DIR)/linux/assets/levels.txt assets
 
-debug-web: build-debug-web
+debug-web: $(DEBUG_DIR)/web
 	firefox $(DEBUG_DIR)/web/$(NAME).html
 
-clean:
+clean-debug:
 	rm -rf $(OBJ_DIR)
 	rm -rf $(DEBUG_DIR)
+
+clean-release:
+	rm -rf $(RELEASE_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
 	$(CC) $< -c $(INCLUDE_FLAGS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
-build-debug-linux: $(patsubst %, $(OBJ_DIR)/%.o, $(OBJS)) main.cpp
+$(DEBUG_DIR)/linux: $(patsubst %, $(OBJ_DIR)/%.o, $(OBJS)) main.cpp
 	mkdir -p $(DEBUG_DIR)
 	mkdir -p $(DEBUG_DIR)/linux
 	$(CC) $^ $(INCLUDE_FLAGS) $(DEBUG_COMPILER_FLAGS) $(LINKER_FLAGS) -o $(DEBUG_DIR)/linux/$(NAME)
 	cp -r $(ASSETS_DIR) $(DEBUG_DIR)/linux
 
-build-debug-web: $(SRC) main.cpp
+$(DEBUG_DIR)/web: $(SRC) main.cpp
 	mkdir -p $(DEBUG_DIR)
 	mkdir -p $(DEBUG_DIR)/web
 	em++ -g -Wall -std=c++11 $^ $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(DEBUG_DIR)/web/$(NAME).html
 
-build-release-linux: $(SRC) main.cpp
+$(RELEASE_DIR)/linux: $(SRC) main.cpp
 	rm -rf $(RELEASE_DIR)/linux
 	mkdir -p $(RELEASE_DIR)
 	mkdir -p $(RELEASE_DIR)/linux
 	$(CC) $^ $(INCLUDE_FLAGS) $(RELEASE_COMPILER_FLAGS) $(LINKER_FLAGS) -o $(RELEASE_DIR)/linux/$(NAME)
 	cp -r $(ASSETS_DIR) $(RELEASE_DIR)/linux
 
-build-release-web: $(SRC) main.cpp
+$(RELEASE_DIR)/web: $(SRC) main.cpp
 	rm -rf $(RELEASE_DIR)/web
 	mkdir -p $(RELEASE_DIR)
 	mkdir -p $(RELEASE_DIR)/web
 	em++ -O3 -std=c++11 $^ $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(RELEASE_DIR)/web/$(NAME).js
 	cp $(EM_HTML_TEMPLATE) $(RELEASE_DIR)/web/index.html
+
+gh-pages: clean-release $(RELEASE_DIR)/web
+	git branch -D gh-pages
+	git checkout --orphan gh-pages
+	cp -a $(RELEASE_DIR)/web/. .
+	git add $(shell ls $(RELEASE_DIR)/web | xargs -n 1 basename)
+	git commit -m "release"
+	git push origin gh-pages
+	git checkout -f master
 
 gdb: build-linux
 	cd $(DEBUG_DIR)/linux; gdb $(NAME)
