@@ -62,6 +62,7 @@ $(RELEASE_DIR)/web: $(SRC) main.cpp
 gh-pages: clean-release $(RELEASE_DIR)/web
 	git branch -D gh-pages
 	git checkout --orphan gh-pages
+	git rm -rf --cached .
 	cp -a $(RELEASE_DIR)/web/. .
 	git add $(shell ls $(RELEASE_DIR)/web | xargs -n 1 basename)
 	git commit -m "release"
