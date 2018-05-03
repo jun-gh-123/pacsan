@@ -1,5 +1,5 @@
 NAME = pacsan
-CC = g++
+CC = g++ -std=c++11
 INCLUDE_FLAGS = -Iinclude -Isrc
 DEBUG_COMPILER_FLAGS = -Wall -g
 RELEASE_COMPILER_FLAGS = -O3 -DNDEBUG
