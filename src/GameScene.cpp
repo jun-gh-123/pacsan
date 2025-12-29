@@ -4,7 +4,6 @@
 
 void GameScene::resetGameObjects()
 {
-
 	pacsan.Reset(this->game.startRow, this->game.startCol);
 	ghosts[0].Reset(ROWS / 2 - 2, COLS / 2);
 	ghosts[1].Reset(ROWS / 2, COLS / 2);
@@ -151,7 +150,7 @@ void GameScene::Draw()
 		SDL_SetTextureColorMod(this->blocksTexture, 50, 100, 255);
 	} else {
 		if (this->game.blinkOn) {
-			SDL_SetTextureColorMod(this->blocksTexture, 255, 150, 200);
+			SDL_SetTextureColorMod(this->blocksTexture, 166, 33, 64);
 		} else {
 			SDL_SetTextureColorMod(this->blocksTexture, 255, 50, 100);
 		}
