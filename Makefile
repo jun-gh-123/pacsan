@@ -14,7 +14,7 @@ OBJS = $(patsubst $(SRC_DIR)/%.cpp, %, $(SRC))
 EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_MIXER=2 -sALLOW_MEMORY_GROWTH=1
 EM_HTML_TEMPLATE = html/template.html
 
-.PHONY: clean $(RELEASE_DIR)/web $(RELEASE_DIR)/linux
+.PHONY: clean $(RELEASE_DIR)/web $(RELEASE_DIR)/linux gh-pages-deploy
 
 debug-linux: $(DEBUG_DIR)/linux
 	cd $(DEBUG_DIR)/linux; ./$(NAME)
@@ -72,15 +72,19 @@ $(RELEASE_DIR)/web: $(SRC) main.cpp
 	em++ -O3 -std=c++11 $^ $(EM_PORT_FLAGS) --use-preload-plugins --preload-file $(ASSETS_DIR) $(INCLUDE_FLAGS) -o $(RELEASE_DIR)/web/$(NAME).js
 	cp $(EM_HTML_TEMPLATE) $(RELEASE_DIR)/web/index.html
 
-gh-pages: clean-release $(RELEASE_DIR)/web
-	git branch -D gh-pages
-	git checkout --orphan gh-pages
+gh-pages-deploy:
+	git stash
+	git checkout --orphan gh-pages-release
 	git rm -rf --cached .
 	cp -a $(RELEASE_DIR)/web/. .
 	git add $(shell ls $(RELEASE_DIR)/web | xargs -n 1 basename)
 	git commit -m "release"
-	git push -f origin gh-pages
+	git push -f origin gh-pages-release:gh-pages
 	git checkout -f master
+	git branch -D gh-pages-release
+	git stash pop
+
+gh-pages: $(RELEASE_DIR)/web gh-pages-deploy
 
 gdb: build-linux
 	cd $(DEBUG_DIR)/linux; gdb $(NAME)
