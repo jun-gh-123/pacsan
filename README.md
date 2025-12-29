@@ -11,26 +11,32 @@
   - emscripten
  
 # Make commands
-- make
-  - runs 'debug-linux' which builds (make debug/linux) and runs linux build
-- cleaning stuff
-  - make clean-debug
+- ```make```
+  - runs ```make debug-linux``` which builds (```make debug/linux```) and runs linux build
+- Cleaning Stuff
+  - ```make clean-debug```
     - removes all debug build releated dir
-  - make clean-release
+  - ```make clean-release```
     - removes all release build related dir
-  - make clean-debug-web
+  - ```make clean-debug-web```
     - removes web debug build dir
-  - make clean-debug-linux
+  - ```make clean-debug-linux```
     - removes linux debug build dirs
-- building stuff
-  - make debug/linux
+  - ```make clean-release-web```
+    - removes web release dir
+  - ```make clean-release-linux```
+    - removes linux release build dirs
+- Building Stuff
+  - ```make debug/linux```
     - builds linux debug build
-  - make release/linux
+  - ```make release/linux```
     - builds linux release build
-  - make debug/web
+  - ```make debug/web```
     - builds web debug build
-- running stuff
-  - make debug-linux
+  - ```make release/web```
+    - builds web release build
+- Running Stuff
+  - ```make debug-linux```
     - builds and runs linux build
-  - make debug-web
+  - ```make debug-web```
     - builds and serves the build at localhost:8080 if python3 is installed
