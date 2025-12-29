@@ -12,6 +12,25 @@
  
 # Make commands
 - make
-  - runs 'debug-linux' which builds and runs linux build
-- make debug-web
-  - build and run web build
+  - runs 'debug-linux' which builds (make debug/linux) and runs linux build
+- cleaning stuff
+  - make clean-debug
+    - removes all debug build releated dir
+  - make clean-release
+    - removes all release build related dir
+  - make clean-debug-web
+    - removes web debug build dir
+  - make clean-debug-linux
+    - removes linux debug build dirs
+- building stuff
+  - make debug/linux
+    - builds linux debug build
+  - make release/linux
+    - builds linux release build
+  - make debug/web
+    - builds web debug build
+- running stuff
+  - make debug-linux
+    - builds and runs linux build
+  - make debug-web
+    - builds and serves the build at localhost:8080 if python3 is installed
