@@ -40,3 +40,6 @@
     - builds and runs linux build
   - ```make debug-web```
     - builds and serves the build at localhost:8080 if python3 is installed
+- Deploying Stuff
+  - ```make gh-pages```
+    - deploys web export to github gh-pages branch
