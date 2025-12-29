@@ -48,12 +48,9 @@ bool Manager::loadAudio(
 			result = false;
 		}
 	} else {
-		#ifdef __EMSCRIPTEN__
-		this->music[id] = Mix_LoadMUS_RW(SDL_RWFromFile(filepath, "rb"));
-		#else
 		this->music[id] = Mix_LoadMUS(filepath);
-		#endif
-		if (!this->music[id]) {
+		
+    if (!this->music[id]) {
 			result = false;
 		}
 	}

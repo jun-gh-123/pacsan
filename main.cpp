@@ -3,11 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #ifdef __EMSCRIPTEN__
-#include <SDL/SDL_ttf.h>
 #include <emscripten.h>
-#else
-#include <SDL2/SDL_ttf.h>
 #endif
+#include <SDL2/SDL_ttf.h>
 
 // project libraries
 #include "params.hpp"
@@ -62,7 +60,7 @@ bool init()
 	return true;
 }
 
-void loop(void *arg)
+void loop()
 {
 	// update
 	SDL_Event e;
@@ -101,10 +99,10 @@ int main()
 	if (init()) {
 		// loop
 		#ifdef __EMSCRIPTEN__
-			emscripten_set_main_loop_arg(loop, NULL, -1, 1);
+			emscripten_set_main_loop(loop, 0, 1);
 		#else
 			while (!quit) {
-				loop(NULL);
+				loop();
 			}
 		#endif
 	}

@@ -2,11 +2,7 @@
 #define TEXT_HPP
 
 #include <SDL2/SDL.h>
-#ifdef __EMSCRIPTEN__
-#include <SDL/SDL_ttf.h>
-#else
 #include <SDL2/SDL_ttf.h>
-#endif
 
 class Text {
 	protected:

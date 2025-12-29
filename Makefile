@@ -11,7 +11,7 @@ SRC_DIR = src
 SRC = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_DIR = .obj
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, %, $(SRC))
-EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]'
+EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_MIXER=2 -sALLOW_MEMORY_GROWTH=1
 EM_HTML_TEMPLATE = html/template.html
 
 .PHONY: clean
@@ -21,7 +21,7 @@ debug-linux: $(DEBUG_DIR)/linux
 	cp $(DEBUG_DIR)/linux/assets/levels.txt assets
 
 debug-web: $(DEBUG_DIR)/web
-	firefox $(DEBUG_DIR)/web/$(NAME).html
+	cd $(DEBUG_DIR)/web; mv pacsan.html index.html; python -m http.server 8080
 
 clean-debug:
 	rm -rf $(OBJ_DIR)
@@ -29,6 +29,9 @@ clean-debug:
 
 clean-release:
 	rm -rf $(RELEASE_DIR)
+
+clean-debug-web:
+	rm -rf $(DEBUG_DIR)/web
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)

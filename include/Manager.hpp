@@ -5,13 +5,8 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#ifdef __EMSCRIPTEN__
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_mixer.h>
-#else
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#endif
 
 #include "params.hpp"
 #include "Sprite.hpp"
