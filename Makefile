@@ -14,14 +14,14 @@ OBJS = $(patsubst $(SRC_DIR)/%.cpp, %, $(SRC))
 EM_PORT_FLAGS = -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_MIXER=2 -sALLOW_MEMORY_GROWTH=1
 EM_HTML_TEMPLATE = html/template.html
 
-.PHONY: clean
+.PHONY: clean $(RELEASE_DIR)/web $(RELEASE_DIR)/linux
 
 debug-linux: $(DEBUG_DIR)/linux
 	cd $(DEBUG_DIR)/linux; ./$(NAME)
 	cp $(DEBUG_DIR)/linux/assets/levels.txt assets
 
 debug-web: $(DEBUG_DIR)/web
-	cd $(DEBUG_DIR)/web; mv pacsan.html index.html; python -m http.server 8080
+	cd $(DEBUG_DIR)/web; mv pacsan.html index.html; python -m http.server
 
 clean-debug:
 	rm -rf $(OBJ_DIR)
@@ -30,8 +30,18 @@ clean-debug:
 clean-release:
 	rm -rf $(RELEASE_DIR)
 
+clean-debug-linux:
+	rm -rf $(OBJ_DIR)
+	rm -rf $(DEBUG_DIR)/linux
+
 clean-debug-web:
 	rm -rf $(DEBUG_DIR)/web
+
+clean-release-linux:
+	rm -rf $(RELEASE_DIR)/linux
+
+clean-release-web:
+	rm -rf $(RELEASE_DIR)/web
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
